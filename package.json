@@ -1,0 +1,22 @@
+{
+  "name": "digital-payments-book",
+  "version": "1.1.3",
+  "description": "It is aimed at replacing the tedious paperwork that the customer and retailer’s go through. The system will collect data and store it for fast and easy reference. The system will provide users with a complete record of their purchases and payments. It will also provide information about the purchase history & pending payments. The system is thus helpful to reduce the time and complexity of maintaining the records.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aryanxfa/Digital-Payments-Book.git"
+  },
+  "keywords": [
+    "payments"
+  ],
+  "author": "Raptor 9",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aryanxfa/Digital-Payments-Book/issues"
+  },
+  "homepage": "https://github.com/Aryanxfa/Digital-Payments-Book#readme"
+}
