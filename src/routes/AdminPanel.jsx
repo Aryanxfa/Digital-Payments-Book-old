@@ -1,8 +1,7 @@
-import { Outlet, Link } from "react-router-dom"
-import { Footer } from "../components/Footer";
+import React from "react";
 
+export function AdminPanel() {
 
-export function Root() {
     return (
         <>
             <div id="sidebar">
@@ -10,7 +9,7 @@ export function Root() {
                 <nav>
                     <ul>
                         <li>
-                            <Link to={`/login`}>Login</Link>
+                            <Link to={`/`}>Logout</Link>
                         </li>
                         <li>
                             <Link to={`/about`}>About</Link>

@@ -1,4 +1,10 @@
 node_modules
 package-lock.json
 yarn.lock
+.history
 .yarn
+.env
+server/node_modules
+server/package-lock.json
+server/.env
+server/.history
