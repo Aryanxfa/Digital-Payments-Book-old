@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs")
+const cors = require('cors');
 require("dotenv").config();
 
 
@@ -18,3 +19,12 @@ try {
 } catch (e) {
     console.log("Mongodb connection failed.", e);
 }
+
+const UserSchema = mongoose.Schema({
+    username: String,
+    password: String,
+    type: Number,
+    email: String,
+})
+
+const UserModel = mongoose.Model("user", UserSchema);
