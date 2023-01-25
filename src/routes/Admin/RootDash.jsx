@@ -15,7 +15,7 @@ export function Dashroot() {
                             <Link to={`/dashboard/profile`}>Profile</Link>
                         </li>
                         <li>
-                            <Link to={`/`}>Logout</Link>
+                            <Link to={`/`} onClick={() => localStorage.clear()} >Logout</Link>
                         </li>
                     </ul>
                 </nav>
