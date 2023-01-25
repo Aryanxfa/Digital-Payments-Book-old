@@ -1,11 +1,13 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider, } from "react-router-dom";
-import { Root } from "./routes/Root";
+import { Root } from "./routes/Home/Root";
 import { Login } from "./routes/Home/Login";
 import { Register } from "./routes/Home/Register";
 import { About } from "./routes/Home/About";
-import { AdminPanel } from "./routes/AdminPanel";
 import { Homepage } from "./routes/Home/Homepage";
+import { Dashboard } from "./routes/Admin/Dashboard";
+import { Dashroot } from "./routes/Admin/RootDash";
+import { Profile } from "./routes/Admin/Profile";
 
 const router = createBrowserRouter([
     {
@@ -31,16 +33,20 @@ const router = createBrowserRouter([
         ],
     },
     {
-        path: "/admin",
-        element: <AdminPanel />,
+        path: "/dashboard",
+        element: <Dashroot />,
         children: [
             {
-                path: "logout",
-                element: <Root />,
+                path: "/dashboard",
+                element: <Dashboard />,
             },
             {
-                path: "about",
-                element: <About />,
+                path: "/dashboard/profile",
+                element: <Profile />,
+            },
+            {
+                path: "/dashboard/logout",
+                element: <Root />,
             },
         ],
     },

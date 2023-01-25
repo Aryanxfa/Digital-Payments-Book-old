@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 
 export function Login({ setLoginUser }) {
 
-
     const [status, setStatus] = useState("");
     const [isVisible, setVisible] = useState(false);
+    let navigate = useNavigate();
 
     function handleSubmit(e) {
         //get form data
@@ -25,7 +26,10 @@ export function Login({ setLoginUser }) {
                 setVisible(true);
                 if (res.data.message == "Login Success") {
                     localStorage.setItem("username", formJson.userid);
-                    console.log("Signed in as : " , localStorage.getItem("username"));
+                    console.log("Signed in as : ", localStorage.getItem("username"));
+                    navigate("/dashboard");
+                    // setSomething(true);
+                    // <Navigate className="push"></Navigate>
                 }
             }).catch(err => {
                 console.log(err);
@@ -42,6 +46,7 @@ export function Login({ setLoginUser }) {
                     <button type="submit">Submit</button>
                 </form>
                 {(isVisible) ? <><i className="material-icons" style={{ color: "red" }} >info</i><label style={{ color: "red" }} >{status}</label></> : ""}
+                
             </div>
         </>
     )
