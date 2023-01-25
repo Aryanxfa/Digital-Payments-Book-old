@@ -24,8 +24,8 @@ export function Login({ setLoginUser }) {
                 setStatus(res.data.message);
                 setVisible(true);
                 if (res.data.message == "Login Success") {
-                    localStorage.setItem("username", username);
-                    console.log(localStorage.getItem("username"));
+                    localStorage.setItem("username", formJson.userid);
+                    console.log("Signed in as : " , localStorage.getItem("username"));
                 }
             }).catch(err => {
                 console.log(err);
