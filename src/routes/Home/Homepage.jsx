@@ -4,7 +4,7 @@ export function Homepage() {
 
     return (
         <>
-            <h1>thi is the root page</h1>
+            <h1>this is the root page</h1>
         </>
     );
 }
