@@ -2,6 +2,7 @@ import React from "react";
 import { createBrowserRouter, RouterProvider, } from "react-router-dom";
 import { Root } from "./routes/Root";
 import { Login } from "./routes/Home/Login";
+import { Register } from "./routes/Home/Register";
 import { About } from "./routes/Home/About";
 import { AdminPanel } from "./routes/AdminPanel";
 import { Homepage } from "./routes/Home/Homepage";
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
             {
                 path: "login",
                 element: <Login />,
+            },
+            {
+                path: "register",
+                element: <Register />,
             },
             {
                 path: "about",

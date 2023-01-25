@@ -32,18 +32,33 @@ const UserSchema = mongoose.Schema({
 const UserModel = mongoose.model("user", UserSchema);
 
 app.post("/login", (req, res) => {
-    //console.log(req.body);
+
     const { username, password } = req.body;
-    // const userExist = UserModel.exists({ username: username });
-    // const userpass = UserModel.findOne({ username: username });
-    // console.log(userExist);
-    // if (userExist) {
-    //     return res.json({
-    //         message: "user already exists"
-    //     })
-    // }
 
     UserModel.findOne({ username: username }, (err, user) => {
+        if (user) {
+            if (password === user.password) {
+                res.send({ message: "Login Success", user: user })
+            } else {
+                res.send({ message: "Incorrect Password" })
+            }
+        } else {
+            res.send("User is not registered")
+        }
+    })
+
+});
+
+app.post("/register", (req, res) => {
+
+    const { username, email, password } = req.body;
+
+    UserModel.create({
+        username: username,
+        email: email,
+        password: password
+    }, (err, user) => {
+        console.log(user);
         if (user) {
             if (password === user.password) {
                 res.send({ message: "Login Success", user: user })
