@@ -35,9 +35,11 @@ app.post("/login", (req, res) => {
 
     const { username, password } = req.body;
 
+
+
     UserModel.findOne({ username: username }, (err, user) => {
         if (user) {
-            if (password === user.password) {
+            if (bcrypt.compareSync(password, user.password)) {
                 res.send({ message: "Login Success", user: user })
             } else {
                 res.send({ message: "Incorrect Password" })
@@ -53,20 +55,19 @@ app.post("/register", (req, res) => {
 
     const { username, email, password } = req.body;
 
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(password, salt);
+
     UserModel.create({
         username: username,
         email: email,
-        password: password
+        password: hash
     }, (err, user) => {
         console.log(user);
         if (user) {
-            if (password === user.password) {
-                res.send({ message: "Login Success", user: user })
-            } else {
-                res.send({ message: "Incorrect Password" })
-            }
+            res.send({ message: "Registration Successful" })
         } else {
-            res.send("User is not registered")
+            res.send({ message: "User already registered" })
         }
     })
 

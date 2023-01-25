@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import axios from 'axios';
-import bcrypt from "bcryptjs-react";
 
 
 export function Login({ setLoginUser }) {
@@ -14,22 +13,20 @@ export function Login({ setLoginUser }) {
         e.preventDefault();
         const formData = new FormData(e.target);
         const formJson = Object.fromEntries(formData.entries());
-        const pass = formJson.password;
-
-        //hash password
-        var salt = bcrypt.genSaltSync();
-        var hash = bcrypt.hashSync(pass, salt);
 
         //connect with server
         axios.post("http://localhost:3000/login", {
             username: formJson.userid,
-            password: hash
+            password: formJson.password
         })
             .then(res => {
-                console.log(res.data);
-                setStatus(res.data);
+                console.log(res.data.message);
+                setStatus(res.data.message);
                 setVisible(true);
-                // setLoginUser(res.data.user);
+                if (res.data.message == "Login Success") {
+                    localStorage.setItem("username", username);
+                    console.log(localStorage.getItem("username"));
+                }
             }).catch(err => {
                 console.log(err);
             })
