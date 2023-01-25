@@ -28,8 +28,6 @@ export function Login({ setLoginUser }) {
                     localStorage.setItem("username", formJson.userid);
                     console.log("Signed in as : ", localStorage.getItem("username"));
                     navigate("/dashboard");
-                    // setSomething(true);
-                    // <Navigate className="push"></Navigate>
                 }
             }).catch(err => {
                 console.log(err);
@@ -46,7 +44,6 @@ export function Login({ setLoginUser }) {
                     <button type="submit">Submit</button>
                 </form>
                 {(isVisible) ? <><i className="material-icons" style={{ color: "red" }} >info</i><label style={{ color: "red" }} >{status}</label></> : ""}
-                
             </div>
         </>
     )

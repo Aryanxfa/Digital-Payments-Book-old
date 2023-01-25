@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 
 export function Register({ setLoginUser }) {
 
-
     const [status, setStatus] = useState("");
     const [isVisible, setVisible] = useState(false);
+    let navigate = useNavigate();
 
     function handleSubmit(e) {
         //get form data
@@ -24,6 +25,7 @@ export function Register({ setLoginUser }) {
                 console.log(res.data);
                 setStatus(res.data.message);
                 setVisible(true);
+                navigate('/login')
             }).catch(err => {
                 console.log(err);
             })
