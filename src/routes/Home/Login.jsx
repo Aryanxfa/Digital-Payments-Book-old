@@ -4,20 +4,10 @@ import bcrypt from "bcryptjs-react";
 
 
 export function Login({ setLoginUser }) {
-    // const loginCheck = () => {
-    //     e.preventDefault();
-    //     console.log(this.refs.email.value)
-    //     console.log(this.refs.password.value)
-    //     console.log(formObject)
-    //     axios.post("http://localhost:3000/login", user)
-    //         .then(res => {
-    //             alert(res.data.message)
-    //             setLoginUser(res.data.user)
-    //             navigate.push("/")
-    //         })
-    // }
 
-    const [status, setStatus] = useState("")
+
+    const [status, setStatus] = useState("");
+    const [isVisible, setVisible] = useState(false);
 
     function handleSubmit(e) {
         //get form data
@@ -38,7 +28,8 @@ export function Login({ setLoginUser }) {
             .then(res => {
                 console.log(res.data);
                 setStatus(res.data);
-                // setLoginUser(res.data.user)
+                setVisible(true);
+                // setLoginUser(res.data.user);
             }).catch(err => {
                 console.log(err);
             })
@@ -53,7 +44,7 @@ export function Login({ setLoginUser }) {
                     <input type="password" name="password" placeholder="Password"></input>
                     <button type="submit">Submit</button>
                 </form>
-                <label>{status}</label>
+                {(isVisible) ? <><i className="material-icons" style={{ color: "red" }} >info</i><label style={{ color: "red" }} >{status}</label></> : ""}
             </div>
         </>
     )

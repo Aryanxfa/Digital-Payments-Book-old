@@ -1,4 +1,9 @@
-import React from "react";
+import React, { useState } from 'react'
+import { Outlet, Link } from "react-router-dom"
+import { Footer } from "../components/Footer";
+
+export const [isloggedin, setloggedin] = useState(false);
+export const [currusername, setusername] = useState("unknown");
 
 export function AdminPanel() {
 
@@ -13,6 +18,9 @@ export function AdminPanel() {
                         </li>
                         <li>
                             <Link to={`/about`}>About</Link>
+                        </li>
+                        <li>
+                            <Link to={`/profile`}>username</Link>
                         </li>
                     </ul>
                 </nav>
