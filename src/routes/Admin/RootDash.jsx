@@ -7,15 +7,7 @@ export function Dashroot() {
     return (
         <div style={{ display: 'flex', height: '100%' }} >
             <Sidebar>
-                <Menu menuItemStyles={{
-                    button: () => {
-                        return {
-                            '&:hover': {
-                                backgroundColor: '#ecf6fd',
-                            },
-                        };
-                    },
-                }}>
+                <Menu>
                     <MenuItem
                         icon={<span className="material-icons">menu</span>}
                         onClick={() => { collapseSidebar() }}
