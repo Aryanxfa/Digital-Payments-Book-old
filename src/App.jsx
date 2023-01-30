@@ -8,6 +8,7 @@ import { Homepage } from "./routes/Home/Homepage";
 import { Dashboard } from "./routes/Admin/Dashboard";
 import { Dashroot } from "./routes/Admin/RootDash";
 import { Profile } from "./routes/Admin/Profile";
+import { Support } from "./routes/Home/Support";
 
 const router = createBrowserRouter([
     {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
             {
                 path: "about",
                 element: <About />,
+            },
+            {
+                path: "support",
+                element: <Support />,
             },
         ],
     },

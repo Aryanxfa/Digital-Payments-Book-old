@@ -19,6 +19,7 @@ export function Root() {
                     <MenuItem icon={<span className="material-icons">login</span>} component={<Link to="/login" />}> Login</MenuItem>
                     <MenuItem icon={<span className="material-icons">person_add</span>} component={<Link to="/register" />}> Register</MenuItem>
                     <MenuItem icon={<span className="material-icons">info</span>} component={<Link to="/about" />}> About</MenuItem>
+                    <MenuItem icon={<span className="material-icons">support_agent</span>} component={<Link to="/support" />}> Support</MenuItem>
                 </Menu>
             </Sidebar>
             <div className="container">
