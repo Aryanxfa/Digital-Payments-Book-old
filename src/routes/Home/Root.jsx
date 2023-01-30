@@ -12,7 +12,7 @@ export function Root() {
                     <MenuItem
                         icon={<span className="material-icons">menu</span>}
                         onClick={() => { collapseSidebar() }}
-                        style={{ textAlign: "center" }}
+                        style={{ textAlign: "center", backgroundColor:"linen"}}
                     >
                     </MenuItem>
                     <MenuItem icon={<span className="material-icons">home</span>} component={<Link to="/" />}> Home</MenuItem>

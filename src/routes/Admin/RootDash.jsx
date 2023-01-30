@@ -11,11 +11,11 @@ export function Dashroot() {
                     <MenuItem
                         icon={<span className="material-icons">menu</span>}
                         onClick={() => { collapseSidebar() }}
-                        style={{ textAlign: "center" }}
+                        style={{ textAlign: "center", backgroundColor: "linen" }}
                     >
                         <h2>Hello, {user}</h2>
                     </MenuItem>
-                    <MenuItem icon={<span className="material-icons">login</span>} component={<Link to="/dashboard" />}> Dashboard</MenuItem>
+                    <MenuItem icon={<span className="material-icons">dashboard</span>} component={<Link to="/dashboard" />}> Dashboard</MenuItem>
                     <MenuItem icon={<span className="material-icons">person</span>} component={<Link to="/dashboard/profile" />}> Profile</MenuItem>
                     <MenuItem icon={<span className="material-icons">logout</span>} component={<Link to="/" onClick={() => localStorage.clear()} />}> Logout</MenuItem>
                 </Menu>
