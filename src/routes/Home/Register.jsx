@@ -34,7 +34,7 @@ export function Register({ setLoginUser }) {
     return (
         <>
             <div className="login">
-                <h1>Login</h1>
+                <h1>Register</h1>
                 <form method="post" onSubmit={handleSubmit}>
                     <input type="text" name="userid" placeholder="UserID"></input>
                     <input type="email" name="email" placeholder="E-mail"></input>
