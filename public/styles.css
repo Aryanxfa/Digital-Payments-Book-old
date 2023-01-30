@@ -29,20 +29,23 @@ button:active {
 }
 
 form {
-    display: block;
-    box-sizing: border-box;
-    border-bottom: 55em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
 }
 
 .basecontainer {
-    position: relative;
-    display: flexbox;
-    padding: 2em;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .login {
-    position: relative;
-    display: flow-root;
+    justify-content: center;
     padding: 1em;
     align-items: baseline;
 }
