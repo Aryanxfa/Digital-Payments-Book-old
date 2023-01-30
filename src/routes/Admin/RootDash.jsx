@@ -20,7 +20,7 @@ export function Dashroot() {
                     <MenuItem icon={<span className="material-icons">logout</span>} component={<Link to="/" onClick={() => localStorage.clear()} />}> Logout</MenuItem>
                 </Menu>
             </Sidebar>
-            <div id="detail">
+            <div className="basecontainer">
                 <Outlet />
             </div>
         </div>

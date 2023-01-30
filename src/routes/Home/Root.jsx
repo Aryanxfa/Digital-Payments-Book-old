@@ -22,7 +22,7 @@ export function Root() {
                     <MenuItem icon={<span className="material-icons">support_agent</span>} component={<Link to="/support" />}> Support</MenuItem>
                 </Menu>
             </Sidebar>
-            <div className="container">
+            <div className="basecontainer">
                 <Outlet />
                 <Footer />
             </div>
