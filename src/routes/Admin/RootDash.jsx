@@ -7,12 +7,20 @@ export function Dashroot() {
     return (
         <div style={{ display: 'flex', height: '100%' }} >
             <Sidebar>
-                <Menu>
+                <Menu menuItemStyles={{
+                    button: () => {
+                        return {
+                            '&:hover': {
+                                backgroundColor: '#ecf6fd',
+                            },
+                        };
+                    },
+                }}>
                     <MenuItem
                         icon={<span className="material-icons">menu</span>}
                         onClick={() => { collapseSidebar() }}
                         style={{ textAlign: "center" }}
-                    >   {" "}
+                    >
                         <h2>Hello, {user}</h2>
                     </MenuItem>
                     <MenuItem icon={<span className="material-icons">login</span>} component={<Link to="/dashboard" />}> Dashboard</MenuItem>

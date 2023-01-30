@@ -50,6 +50,10 @@ form {
     align-items: baseline;
 }
 
+.ps-menuitem-root:hover {
+    color: #0095ff;
+}
+
 .footer {
     position: absolute;
     bottom: 0px;
