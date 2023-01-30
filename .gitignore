@@ -4,8 +4,11 @@ yarn.lock
 .history
 .yarn
 .env
+.pnp.cjs
+.pnp.loader.mjs
 server/node_modules
 server/package-lock.json
 server/.env
 server/.history
-.pnp.cjs
+server/.pnp.cjs
+server/.pnp.loader.mjs
