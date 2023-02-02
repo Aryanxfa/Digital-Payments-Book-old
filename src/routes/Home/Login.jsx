@@ -41,6 +41,7 @@ export function Login({ setLoginUser }) {
                 <form method="post" onSubmit={handleSubmit}>
                     <input type="text" name="userid" placeholder="UserID"></input>
                     <input type="password" name="password" placeholder="Password"></input>
+                    <label style={{fontFamily: "monospace"}}>Your passwords are hashed with BCcrypt</label>
                     <button type="submit">Submit</button>
                 </form>
                 {(isVisible) ? <><i className="material-icons" style={{ color: "red" }} >info</i><label style={{ color: "red" }} >{status}</label></> : ""}
