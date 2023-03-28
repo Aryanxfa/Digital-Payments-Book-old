@@ -5,8 +5,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ### npm
 
 ```
-npm i
-or
 npm i --legacy-peer-deps
 ```
 
