@@ -1,23 +1,21 @@
-// material
-import { Box, Grid, Container, Typography } from '@material-ui/core';
+// @mui
+import { Grid, Container, Typography } from '@mui/material';
 // hooks
 import useSettings from '../../hooks/useSettings';
 // components
 import Page from '../../components/Page';
+// sections
 import {
   AnalyticsTasks,
-  AnalyticsNewUsers,
-  AnalyticsBugReports,
-  AnalyticsItemOrders,
   AnalyticsNewsUpdate,
-  AnalyticsWeeklySales,
   AnalyticsOrderTimeline,
   AnalyticsCurrentVisits,
   AnalyticsWebsiteVisits,
   AnalyticsTrafficBySite,
+  AnalyticsWidgetSummary,
   AnalyticsCurrentSubject,
-  AnalyticsConversionRates
-} from '../../components/_dashboard/general-analytics';
+  AnalyticsConversionRates,
+} from '../../sections/@dashboard/general/analytics';
 
 // ----------------------------------------------------------------------
 
@@ -25,23 +23,32 @@ export default function GeneralAnalytics() {
   const { themeStretch } = useSettings();
 
   return (
-    <Page title="General: Analytics | Minimal-UI">
+    <Page title="General: Analytics">
       <Container maxWidth={themeStretch ? false : 'xl'}>
-        <Box sx={{ pb: 5 }}>
-          <Typography variant="h4">Hi, Welcome back</Typography>
-        </Box>
+        <Typography variant="h4" sx={{ mb: 5 }}>
+          Hi, Welcome back
+        </Typography>
+
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AnalyticsWeeklySales />
+            <AnalyticsWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
           </Grid>
+
           <Grid item xs={12} sm={6} md={3}>
-            <AnalyticsNewUsers />
+            <AnalyticsWidgetSummary title="New Users" total={1352831} color="info" icon={'ant-design:apple-filled'} />
           </Grid>
+
           <Grid item xs={12} sm={6} md={3}>
-            <AnalyticsItemOrders />
+            <AnalyticsWidgetSummary
+              title="Item Orders"
+              total={1723315}
+              color="warning"
+              icon={'ant-design:windows-filled'}
+            />
           </Grid>
+
           <Grid item xs={12} sm={6} md={3}>
-            <AnalyticsBugReports />
+            <AnalyticsWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>

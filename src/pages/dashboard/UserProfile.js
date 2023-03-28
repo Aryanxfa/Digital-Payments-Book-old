@@ -1,31 +1,27 @@
-import { Icon } from '@iconify/react';
 import { capitalCase } from 'change-case';
-import { useEffect, useState } from 'react';
-import heartFill from '@iconify/icons-eva/heart-fill';
-import peopleFill from '@iconify/icons-eva/people-fill';
-import roundPermMedia from '@iconify/icons-ic/round-perm-media';
-import roundAccountBox from '@iconify/icons-ic/round-account-box';
-// material
-import { styled } from '@material-ui/core/styles';
-import { Tab, Box, Card, Tabs, Container } from '@material-ui/core';
-// redux
-import { useDispatch, useSelector } from '../../redux/store';
-import { getPosts, getGallery, getFriends, getProfile, getFollowers, onToggleFollow } from '../../redux/slices/user';
+import { useState } from 'react';
+// @mui
+import { styled } from '@mui/material/styles';
+import { Tab, Box, Card, Tabs, Container } from '@mui/material';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useSettings from '../../hooks/useSettings';
+// _mock_
+import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } from '../../_mock';
 // components
 import Page from '../../components/Page';
+import Iconify from '../../components/Iconify';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
+// sections
 import {
   Profile,
   ProfileCover,
   ProfileFriends,
   ProfileGallery,
-  ProfileFollowers
-} from '../../components/_dashboard/user/profile';
+  ProfileFollowers,
+} from '../../sections/@dashboard/user/profile';
 
 // ----------------------------------------------------------------------
 
@@ -37,90 +33,73 @@ const TabsWrapperStyle = styled('div')(({ theme }) => ({
   position: 'absolute',
   backgroundColor: theme.palette.background.paper,
   [theme.breakpoints.up('sm')]: {
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   [theme.breakpoints.up('md')]: {
     justifyContent: 'flex-end',
-    paddingRight: theme.spacing(3)
-  }
+    paddingRight: theme.spacing(3),
+  },
 }));
 
 // ----------------------------------------------------------------------
 
 export default function UserProfile() {
   const { themeStretch } = useSettings();
-  const dispatch = useDispatch();
-  const { myProfile, posts, followers, friends, gallery } = useSelector((state) => state.user);
   const { user } = useAuth();
+
   const [currentTab, setCurrentTab] = useState('profile');
   const [findFriends, setFindFriends] = useState('');
 
-  useEffect(() => {
-    dispatch(getProfile());
-    dispatch(getPosts());
-    dispatch(getFollowers());
-    dispatch(getFriends());
-    dispatch(getGallery());
-  }, [dispatch]);
-
-  const handleChangeTab = (event, newValue) => {
+  const handleChangeTab = (newValue) => {
     setCurrentTab(newValue);
   };
 
-  const handleToggleFollow = (followerId) => {
-    dispatch(onToggleFollow(followerId));
+  const handleFindFriends = (value) => {
+    setFindFriends(value);
   };
-
-  const handleFindFriends = (event) => {
-    setFindFriends(event.target.value);
-  };
-
-  if (!myProfile) {
-    return null;
-  }
 
   const PROFILE_TABS = [
     {
       value: 'profile',
-      icon: <Icon icon={roundAccountBox} width={20} height={20} />,
-      component: <Profile myProfile={myProfile} posts={posts} />
+      icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+      component: <Profile myProfile={_userAbout} posts={_userFeeds} />,
     },
     {
       value: 'followers',
-      icon: <Icon icon={heartFill} width={20} height={20} />,
-      component: <ProfileFollowers followers={followers} onToggleFollow={handleToggleFollow} />
+      icon: <Iconify icon={'eva:heart-fill'} width={20} height={20} />,
+      component: <ProfileFollowers followers={_userFollowers} />,
     },
     {
       value: 'friends',
-      icon: <Icon icon={peopleFill} width={20} height={20} />,
-      component: <ProfileFriends friends={friends} findFriends={findFriends} onFindFriends={handleFindFriends} />
+      icon: <Iconify icon={'eva:people-fill'} width={20} height={20} />,
+      component: <ProfileFriends friends={_userFriends} findFriends={findFriends} onFindFriends={handleFindFriends} />,
     },
     {
       value: 'gallery',
-      icon: <Icon icon={roundPermMedia} width={20} height={20} />,
-      component: <ProfileGallery gallery={gallery} />
-    }
+      icon: <Iconify icon={'ic:round-perm-media'} width={20} height={20} />,
+      component: <ProfileGallery gallery={_userGallery} />,
+    },
   ];
 
   return (
-    <Page title="User: Profile | Minimal-UI">
+    <Page title="User: Profile">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Profile"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             { name: 'User', href: PATH_DASHBOARD.user.root },
-            { name: user.displayName }
+            { name: user?.displayName || '' },
           ]}
         />
         <Card
           sx={{
             mb: 3,
             height: 280,
-            position: 'relative'
+            position: 'relative',
           }}
         >
-          <ProfileCover myProfile={myProfile} />
+          <ProfileCover myProfile={_userAbout} />
 
           <TabsWrapperStyle>
             <Tabs
@@ -128,7 +107,7 @@ export default function UserProfile() {
               scrollButtons="auto"
               variant="scrollable"
               allowScrollButtonsMobile
-              onChange={handleChangeTab}
+              onChange={(e, value) => handleChangeTab(value)}
             >
               {PROFILE_TABS.map((tab) => (
                 <Tab disableRipple key={tab.value} value={tab.value} icon={tab.icon} label={capitalCase(tab.value)} />

@@ -1,39 +1,38 @@
 // routes
 import Router from './routes';
 // theme
-import ThemeConfig from './theme';
-// hooks
-import useAuth from './hooks/useAuth';
-
+import ThemeProvider from './theme';
 // components
 import Settings from './components/settings';
 import RtlLayout from './components/RtlLayout';
+import { ChartStyle } from './components/chart';
 import ScrollToTop from './components/ScrollToTop';
-import LoadingScreen from './components/LoadingScreen';
-import GoogleAnalytics from './components/GoogleAnalytics';
+import { ProgressBarStyle } from './components/ProgressBar';
 import NotistackProvider from './components/NotistackProvider';
-import ThemePrimaryColor from './components/ThemePrimaryColor';
+import ThemeColorPresets from './components/ThemeColorPresets';
 import ThemeLocalization from './components/ThemeLocalization';
+import MotionLazyContainer from './components/animate/MotionLazyContainer';
 
 // ----------------------------------------------------------------------
 
 export default function App() {
-  const { isInitialized } = useAuth();
-
   return (
-    <ThemeConfig>
-      <ThemePrimaryColor>
+    <ThemeProvider>
+      <ThemeColorPresets>
         <ThemeLocalization>
           <RtlLayout>
             <NotistackProvider>
-              <Settings />
-              <ScrollToTop />
-              <GoogleAnalytics />
-              {isInitialized ? <Router /> : <LoadingScreen />}
+              <MotionLazyContainer>
+                <ProgressBarStyle />
+                <ChartStyle />
+                <Settings />
+                <ScrollToTop />
+                <Router />
+              </MotionLazyContainer>
             </NotistackProvider>
           </RtlLayout>
         </ThemeLocalization>
-      </ThemePrimaryColor>
-    </ThemeConfig>
+      </ThemeColorPresets>
+    </ThemeProvider>
   );
 }

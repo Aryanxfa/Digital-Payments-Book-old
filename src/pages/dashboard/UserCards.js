@@ -1,59 +1,49 @@
-import { useEffect } from 'react';
-// material
-import { Container, Grid, Skeleton } from '@material-ui/core';
-// redux
-import { useDispatch, useSelector } from '../../redux/store';
-import { getUsers } from '../../redux/slices/user';
+// @mui
+import { Container, Box } from '@mui/material';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
 import useSettings from '../../hooks/useSettings';
+// _mock_
+import { _userCards } from '../../_mock';
 // components
 import Page from '../../components/Page';
-import { UserCard } from '../../components/_dashboard/user/cards';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
+// sections
+import { UserCard } from '../../sections/@dashboard/user/cards';
 
 // ----------------------------------------------------------------------
 
-const SkeletonLoad = (
-  <>
-    {[...Array(8)].map((_, index) => (
-      <Grid item xs={12} sm={6} md={4} key={index}>
-        <Skeleton variant="rectangular" width="100%" sx={{ paddingTop: '115%', borderRadius: 2 }} />
-      </Grid>
-    ))}
-  </>
-);
-
 export default function UserCards() {
   const { themeStretch } = useSettings();
-  const dispatch = useDispatch();
-  const { users } = useSelector((state) => state.user);
-
-  useEffect(() => {
-    dispatch(getUsers());
-  }, [dispatch]);
 
   return (
-    <Page title="User: Cards | Minimal-UI">
+    <Page title="User: Cards">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="User Cards"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             { name: 'User', href: PATH_DASHBOARD.user.root },
-            { name: 'Cards' }
+            { name: 'Cards' },
           ]}
         />
-        <Grid container spacing={3}>
-          {users.map((user) => (
-            <Grid key={user.id} item xs={12} sm={6} md={4}>
-              <UserCard user={user} />
-            </Grid>
-          ))}
 
-          {!users.length && SkeletonLoad}
-        </Grid>
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 3,
+            gridTemplateColumns: {
+              xs: 'repeat(1, 1fr)',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+            },
+          }}
+        >
+          {_userCards.map((user) => (
+            <UserCard key={user.id} user={user} />
+          ))}
+        </Box>
       </Container>
     </Page>
   );

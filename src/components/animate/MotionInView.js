@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { m, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-// material
-import { Box } from '@material-ui/core';
+// @mui
+import { Box } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 MotionInView.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.node.isRequired,
   variants: PropTypes.object,
   transition: PropTypes.object,
   triggerOnce: PropTypes.bool,
@@ -23,6 +23,7 @@ export default function MotionInView({ children, variants, transition, threshold
   });
 
   useEffect(() => {
+    if (!variants) return;
     if (inView) {
       controls.start(Object.keys(variants)[1]);
     } else {
@@ -33,8 +34,8 @@ export default function MotionInView({ children, variants, transition, threshold
   return (
     <Box
       ref={ref}
-      component={motion.div}
-      initial={Object.keys(variants)[0]}
+      component={m.div}
+      initial={variants ? Object.keys(variants)[0] : false}
       animate={controls}
       variants={variants}
       transition={transition}

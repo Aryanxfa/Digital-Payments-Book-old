@@ -1,10 +1,8 @@
-import { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from '@iconify/react';
-import checkmarkFill from '@iconify/icons-eva/checkmark-fill';
-// material
-import { Box, Grid, Step, Stepper, Container, StepLabel, StepConnector } from '@material-ui/core';
-import { withStyles } from '@material-ui/styles';
+import { useEffect } from 'react';
+// @mui
+import { styled } from '@mui/material/styles';
+import { Box, Grid, Step, Stepper, Container, StepLabel, StepConnector } from '@mui/material';
 // redux
 import { useDispatch, useSelector } from '../../redux/store';
 import { getCart, createBilling } from '../../redux/slices/product';
@@ -15,39 +13,38 @@ import useIsMountedRef from '../../hooks/useIsMountedRef';
 import useSettings from '../../hooks/useSettings';
 // components
 import Page from '../../components/Page';
+import Iconify from '../../components/Iconify';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
+// sections
 import {
   CheckoutCart,
   CheckoutPayment,
   CheckoutOrderComplete,
-  CheckoutBillingAddress
-} from '../../components/_dashboard/e-commerce/checkout';
+  CheckoutBillingAddress,
+} from '../../sections/@dashboard/e-commerce/checkout';
 
 // ----------------------------------------------------------------------
 
 const STEPS = ['Cart', 'Billing & address', 'Payment'];
 
-const QontoConnector = withStyles((theme) => ({
-  alternativeLabel: {
-    top: 10,
-    left: 'calc(-50% + 20px)',
-    right: 'calc(50% + 20px)'
-  },
-  active: {
-    '& $line': { borderColor: theme.palette.primary.main }
-  },
-  completed: {
-    '& $line': { borderColor: theme.palette.primary.main }
-  },
-  line: {
+const QontoConnector = styled(StepConnector)(({ theme }) => ({
+  top: 10,
+  left: 'calc(-50% + 20px)',
+  right: 'calc(50% + 20px)',
+  '& .MuiStepConnector-line': {
     borderTopWidth: 2,
-    borderColor: theme.palette.divider
-  }
-}))(StepConnector);
+    borderColor: theme.palette.divider,
+  },
+  '&.Mui-active, &.Mui-completed': {
+    '& .MuiStepConnector-line': {
+      borderColor: theme.palette.primary.main,
+    },
+  },
+}));
 
 QontoStepIcon.propTypes = {
   active: PropTypes.bool,
-  completed: PropTypes.bool
+  completed: PropTypes.bool,
 };
 
 function QontoStepIcon({ active, completed }) {
@@ -60,19 +57,18 @@ function QontoStepIcon({ active, completed }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: active ? 'primary.main' : 'divider',
-        bgcolor: 'background.default'
+        color: active ? 'primary.main' : 'text.disabled',
       }}
     >
       {completed ? (
-        <Box component={Icon} icon={checkmarkFill} sx={{ zIndex: 1, width: 20, height: 20, color: 'primary.main' }} />
+        <Iconify icon={'eva:checkmark-fill'} sx={{ zIndex: 1, width: 20, height: 20, color: 'primary.main' }} />
       ) : (
         <Box
           sx={{
             width: 8,
             height: 8,
             borderRadius: '50%',
-            backgroundColor: 'currentColor'
+            backgroundColor: 'currentColor',
           }}
         />
       )}
@@ -101,7 +97,7 @@ export default function EcommerceCheckout() {
   }, [dispatch, activeStep]);
 
   return (
-    <Page title="Ecommerce: Checkout | Minimal-UI">
+    <Page title="Ecommerce: Checkout">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Checkout"
@@ -109,9 +105,9 @@ export default function EcommerceCheckout() {
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
               name: 'E-Commerce',
-              href: PATH_DASHBOARD.eCommerce.root
+              href: PATH_DASHBOARD.eCommerce.root,
             },
-            { name: 'Checkout' }
+            { name: 'Checkout' },
           ]}
         />
 
@@ -125,8 +121,8 @@ export default function EcommerceCheckout() {
                     sx={{
                       '& .MuiStepLabel-label': {
                         typography: 'subtitle2',
-                        color: 'text.disabled'
-                      }
+                        color: 'text.disabled',
+                      },
                     }}
                   >
                     {label}

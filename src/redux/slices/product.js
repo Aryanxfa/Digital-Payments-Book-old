@@ -1,13 +1,16 @@
-import { sum, map, filter, uniqBy, reject } from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
+import sum from 'lodash/sum';
+import uniqBy from 'lodash/uniqBy';
 // utils
 import axios from '../../utils/axios';
+//
+import { dispatch } from '../store';
 
 // ----------------------------------------------------------------------
 
 const initialState = {
   isLoading: false,
-  error: false,
+  error: null,
   products: [],
   product: null,
   sortBy: null,
@@ -16,7 +19,7 @@ const initialState = {
     category: 'All',
     colors: [],
     priceRange: '',
-    rating: ''
+    rating: '',
   },
   checkout: {
     activeStep: 0,
@@ -25,8 +28,8 @@ const initialState = {
     total: 0,
     discount: 0,
     shipping: 0,
-    billing: null
-  }
+    billing: null,
+  },
 };
 
 const slice = createSlice({
@@ -56,11 +59,6 @@ const slice = createSlice({
       state.product = action.payload;
     },
 
-    // DELETE PRODUCT
-    deleteProduct(state, action) {
-      state.products = reject(state.products, { id: action.payload });
-    },
-
     //  SORT & FILTER PRODUCTS
     sortByProducts(state, action) {
       state.sortBy = action.payload;
@@ -78,7 +76,7 @@ const slice = createSlice({
     getCart(state, action) {
       const cart = action.payload;
 
-      const subtotal = sum(cart.map((product) => product.price * product.quantity));
+      const subtotal = sum(cart.map((cartItem) => cartItem.price * cartItem.quantity));
       const discount = cart.length === 0 ? 0 : state.checkout.discount;
       const shipping = cart.length === 0 ? 0 : state.checkout.shipping;
       const billing = cart.length === 0 ? null : state.checkout.billing;
@@ -98,12 +96,12 @@ const slice = createSlice({
       if (isEmptyCart) {
         state.checkout.cart = [...state.checkout.cart, product];
       } else {
-        state.checkout.cart = map(state.checkout.cart, (_product) => {
+        state.checkout.cart = state.checkout.cart.map((_product) => {
           const isExisted = _product.id === product.id;
           if (isExisted) {
             return {
               ..._product,
-              quantity: _product.quantity + 1
+              quantity: _product.quantity + 1,
             };
           }
           return _product;
@@ -113,7 +111,7 @@ const slice = createSlice({
     },
 
     deleteCart(state, action) {
-      const updateCart = filter(state.checkout.cart, (item) => item.id !== action.payload);
+      const updateCart = state.checkout.cart.filter((item) => item.id !== action.payload);
 
       state.checkout.cart = updateCart;
     },
@@ -143,11 +141,11 @@ const slice = createSlice({
 
     increaseQuantity(state, action) {
       const productId = action.payload;
-      const updateCart = map(state.checkout.cart, (product) => {
+      const updateCart = state.checkout.cart.map((product) => {
         if (product.id === productId) {
           return {
             ...product,
-            quantity: product.quantity + 1
+            quantity: product.quantity + 1,
           };
         }
         return product;
@@ -158,11 +156,11 @@ const slice = createSlice({
 
     decreaseQuantity(state, action) {
       const productId = action.payload;
-      const updateCart = map(state.checkout.cart, (product) => {
+      const updateCart = state.checkout.cart.map((product) => {
         if (product.id === productId) {
           return {
             ...product,
-            quantity: product.quantity - 1
+            quantity: product.quantity - 1,
           };
         }
         return product;
@@ -185,8 +183,8 @@ const slice = createSlice({
       const shipping = action.payload;
       state.checkout.shipping = shipping;
       state.checkout.total = state.checkout.subtotal - state.checkout.discount + shipping;
-    }
-  }
+    },
+  },
 });
 
 // Reducer
@@ -201,20 +199,19 @@ export const {
   onBackStep,
   onNextStep,
   deleteCart,
-  deleteProduct,
   createBilling,
   applyShipping,
   applyDiscount,
-  filterProducts,
-  sortByProducts,
   increaseQuantity,
-  decreaseQuantity
+  decreaseQuantity,
+  sortByProducts,
+  filterProducts,
 } = slice.actions;
 
 // ----------------------------------------------------------------------
 
 export function getProducts() {
-  return async (dispatch) => {
+  return async () => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/products');
@@ -228,11 +225,11 @@ export function getProducts() {
 // ----------------------------------------------------------------------
 
 export function getProduct(name) {
-  return async (dispatch) => {
+  return async () => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/products/product', {
-        params: { name }
+        params: { name },
       });
       dispatch(slice.actions.getProductSuccess(response.data.product));
     } catch (error) {

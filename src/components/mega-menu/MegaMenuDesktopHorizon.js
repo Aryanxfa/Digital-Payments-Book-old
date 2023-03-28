@@ -1,68 +1,50 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { Icon } from '@iconify/react';
-import chevronDownFill from '@iconify/icons-eva/chevron-down-fill';
-// material
-import { Box, Link, Paper, Typography, Divider, Stack } from '@material-ui/core';
+// @mui
+import { Masonry } from '@mui/lab';
+import { Link, Paper, Typography, Divider, Stack } from '@mui/material';
+// components
+import Iconify from '../Iconify';
 //
 import MenuHotProducts from './MenuHotProducts';
-import MegaMenuCarousel from './MegaMenuCarousel';
+import MegaMenuCarousel from './MenuCarousel';
 
 // ----------------------------------------------------------------------
 
-const CONTENT_HEIGHT = 400;
 const ITEM_SPACING = 4;
-const ITEM_HEIGHT = 64;
-const ITEM_ON_ROW = {
-  width: 'calc((100%/3) - 16px)',
-  '&:nth-of-type(3n+1)': { order: 1 },
-  '&:nth-of-type(3n+2)': { order: 2 },
-  '&:nth-of-type(3n)': { order: 3 }
-};
+const PARENT_ITEM_HEIGHT = 64;
 
 // ----------------------------------------------------------------------
 
-ParentItem.propTypes = {
-  path: PropTypes.string,
-  title: PropTypes.string,
-  open: PropTypes.bool,
-  hasSub: PropTypes.bool
+MegaMenuDesktopHorizon.propTypes = {
+  navConfig: PropTypes.array,
 };
 
-function ParentItem({ path, title, open, hasSub, ...other }) {
-  const activeStyle = {
-    color: 'primary.main'
-  };
-
+export default function MegaMenuDesktopHorizon({ navConfig, ...other }) {
   return (
-    <Link
-      to={path}
-      component={RouterLink}
-      underline="none"
-      color="inherit"
-      variant="subtitle2"
-      sx={{
-        display: 'flex',
-        cursor: 'pointer',
-        alignItems: 'center',
-        textTransform: 'capitalize',
-        height: ITEM_HEIGHT,
-        lineHeight: `${ITEM_HEIGHT}px`,
-        transition: (theme) => theme.transitions.create('all'),
-        '&:hover': activeStyle,
-        ...(open && activeStyle)
-      }}
-      {...other}
-    >
-      {title}
-      {hasSub && <Box component={Icon} icon={chevronDownFill} sx={{ ml: 1, width: 20, height: 20 }} />}
-    </Link>
+    <Stack direction="row" spacing={ITEM_SPACING} {...other}>
+      {navConfig.map((parent) => (
+        <MegaMenuItem key={parent.title} parent={parent} />
+      ))}
+    </Stack>
   );
 }
 
+// ----------------------------------------------------------------------
+
 MegaMenuItem.propTypes = {
-  parent: PropTypes.object
+  parent: PropTypes.shape({
+    title: PropTypes.string,
+    path: PropTypes.string,
+    more: PropTypes.shape({
+      title: PropTypes.string,
+      path: PropTypes.string,
+    }),
+    tags: PropTypes.array,
+    products: PropTypes.array,
+    children: PropTypes.array,
+  }),
 };
 
 function MegaMenuItem({ parent }) {
@@ -91,59 +73,57 @@ function MegaMenuItem({ parent }) {
               width: '100%',
               position: 'absolute',
               borderRadius: 2,
-              top: ITEM_HEIGHT,
+              top: PARENT_ITEM_HEIGHT,
               left: -ITEM_SPACING * 8,
               zIndex: (theme) => theme.zIndex.modal,
-              boxShadow: (theme) => theme.customShadows.z20
+              boxShadow: (theme) => theme.customShadows.z20,
             }}
           >
-            <Stack flexWrap="wrap" alignContent="space-between" height={CONTENT_HEIGHT}>
-              {children.map((list) => {
-                const { subheader, items } = list;
+            <Masonry columns={3} spacing={2}>
+              {children.map((list) => (
+                <Stack key={list.subheader} spacing={1.25} sx={{ mb: 2.5 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'fontWeightBold' }} noWrap>
+                    {list.subheader}
+                  </Typography>
+                  {list.items.map((link) => (
+                    <Link
+                      noWrap
+                      key={link.title}
+                      component={RouterLink}
+                      to={link.path}
+                      underline="none"
+                      sx={{
+                        typography: 'body2',
+                        color: 'text.primary',
+                        fontSize: 13,
+                        transition: (theme) => theme.transitions.create('all'),
+                        '&:hover': { color: 'primary.main' },
+                      }}
+                    >
+                      {link.title}
+                    </Link>
+                  ))}
+                </Stack>
+              ))}
+            </Masonry>
 
-                return (
-                  <Stack key={subheader} spacing={1.25} sx={{ mb: 2.5, ...ITEM_ON_ROW }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 'fontWeightBold' }} noWrap>
-                      {subheader}
-                    </Typography>
-                    {items.map((link) => (
-                      <Link
-                        noWrap
-                        key={link.title}
-                        component={RouterLink}
-                        to={link.path}
-                        underline="none"
-                        sx={{
-                          typography: 'body2',
-                          color: 'text.primary',
-                          fontSize: 13,
-                          transition: (theme) => theme.transitions.create('all'),
-                          '&:hover': { color: 'primary.main' }
-                        }}
-                      >
-                        {link.title}
-                      </Link>
-                    ))}
-                  </Stack>
-                );
-              })}
-            </Stack>
+            {!!more && !!tags && !!products && (
+              <Stack spacing={3}>
+                <Link
+                  to={more?.path}
+                  component={RouterLink}
+                  sx={{ typography: 'body2', display: 'inline-flex', fontSize: 13 }}
+                >
+                  {more?.title}
+                </Link>
 
-            <Stack spacing={3}>
-              <Link
-                to={more.path}
-                component={RouterLink}
-                sx={{ typography: 'body2', display: 'inline-flex', fontSize: 13 }}
-              >
-                {more.title}
-              </Link>
+                <Divider />
+                <MegaMenuCarousel products={products} numberShow={8} />
+                <Divider />
 
-              <Divider />
-              <MegaMenuCarousel products={products} numberShow={8} />
-              <Divider />
-
-              <MenuHotProducts tags={tags} />
-            </Stack>
+                <MenuHotProducts tags={tags} />
+              </Stack>
+            )}
           </Paper>
         )}
       </>
@@ -153,16 +133,42 @@ function MegaMenuItem({ parent }) {
   return <ParentItem path={path} title={title} />;
 }
 
-MegaMenuDesktopHorizon.propTypes = {
-  navConfig: PropTypes.array
+// ----------------------------------------------------------------------
+
+ParentItem.propTypes = {
+  hasSub: PropTypes.bool,
+  open: PropTypes.bool,
+  path: PropTypes.string,
+  title: PropTypes.string,
 };
 
-export default function MegaMenuDesktopHorizon({ navConfig, ...other }) {
+function ParentItem({ title, path, open, hasSub, ...other }) {
+  const activeStyle = {
+    color: 'primary.main',
+  };
+
   return (
-    <Stack direction="row" spacing={ITEM_SPACING} {...other}>
-      {navConfig.map((parent) => (
-        <MegaMenuItem key={parent.title} parent={parent} />
-      ))}
-    </Stack>
+    <Link
+      to={path}
+      component={RouterLink}
+      underline="none"
+      color="inherit"
+      variant="subtitle2"
+      sx={{
+        display: 'flex',
+        cursor: 'pointer',
+        alignItems: 'center',
+        textTransform: 'capitalize',
+        height: PARENT_ITEM_HEIGHT,
+        lineHeight: `${PARENT_ITEM_HEIGHT}px`,
+        transition: (theme) => theme.transitions.create('all'),
+        '&:hover': activeStyle,
+        ...(open && activeStyle),
+      }}
+      {...other}
+    >
+      {title}
+      {hasSub && <Iconify icon={'eva:chevron-down-fill'} sx={{ ml: 1, width: 20, height: 20 }} />}
+    </Link>
   );
 }

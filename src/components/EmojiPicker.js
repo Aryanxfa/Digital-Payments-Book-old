@@ -1,17 +1,19 @@
 import 'emoji-mart/css/emoji-mart.css';
 import PropTypes from 'prop-types';
 import { Picker } from 'emoji-mart';
-import { Icon } from '@iconify/react';
 import { useState } from 'react';
-import smilingFaceFill from '@iconify/icons-eva/smiling-face-fill';
-// material
-import { alpha, useTheme, styled } from '@material-ui/core/styles';
-import { IconButton, ClickAwayListener } from '@material-ui/core';
+// @mui
+import { useTheme, styled } from '@mui/material/styles';
+import { Box, IconButton, ClickAwayListener } from '@mui/material';
+// utils
+import cssStyles from '../utils/cssStyles';
+//
+import Iconify from './Iconify';
 
 // ----------------------------------------------------------------------
 
-const RootStyle = styled('div')({
-  position: 'relative'
+const RootStyle = styled(Box)({
+  position: 'relative',
 });
 
 const PickerStyle = styled('div')(({ theme }) => ({
@@ -20,16 +22,16 @@ const PickerStyle = styled('div')(({ theme }) => ({
   position: 'absolute',
   left: theme.spacing(-2),
   boxShadow: theme.customShadows.z20,
-  borderRadius: theme.shape.borderRadiusMd,
+  borderRadius: Number(theme.shape.borderRadius) * 2,
   '& .emoji-mart': {
     border: 'none',
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
   },
   '& .emoji-mart-anchor': {
     color: theme.palette.text.disabled,
     '&:hover, &:focus, &.emoji-mart-anchor-selected': {
-      color: theme.palette.text.primary
-    }
+      color: theme.palette.text.primary,
+    },
   },
   '& .emoji-mart-bar': { borderColor: theme.palette.divider },
   '& .emoji-mart-search input': {
@@ -38,31 +40,29 @@ const PickerStyle = styled('div')(({ theme }) => ({
     borderColor: theme.palette.grey[500_32],
     '&::placeholder': {
       ...theme.typography.body2,
-      color: theme.palette.text.disabled
-    }
+      color: theme.palette.text.disabled,
+    },
   },
   '& .emoji-mart-search-icon svg': {
     opacity: 1,
-    fill: theme.palette.text.disabled
+    fill: theme.palette.text.disabled,
   },
   '& .emoji-mart-category-label span': {
     ...theme.typography.subtitle2,
-    backdropFilter: 'blur(8px)',
-    WebkitBackdropFilter: 'blur(8px)', // Fix on Mobile
+    ...cssStyles().bgBlur({ color: theme.palette.background.paper }),
     color: theme.palette.text.primary,
-    backgroundColor: alpha(theme.palette.background.paper, 0.8)
   },
   '& .emoji-mart-title-label': { color: theme.palette.text.primary },
   '& .emoji-mart-category .emoji-mart-emoji:hover:before': {
-    backgroundColor: theme.palette.action.selected
+    backgroundColor: theme.palette.action.selected,
   },
   '& .emoji-mart-emoji': { outline: 'none' },
   '& .emoji-mart-preview-name': {
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
   },
   '& .emoji-mart-preview-shortname, .emoji-mart-preview-emoticon': {
-    color: theme.palette.text.secondary
-  }
+    color: theme.palette.text.secondary,
+  },
 }));
 
 // ----------------------------------------------------------------------
@@ -71,7 +71,7 @@ EmojiPicker.propTypes = {
   disabled: PropTypes.bool,
   value: PropTypes.string,
   setValue: PropTypes.func,
-  alignRight: PropTypes.bool
+  alignRight: PropTypes.bool,
 };
 
 export default function EmojiPicker({ disabled, value, setValue, alignRight = false, ...other }) {
@@ -85,13 +85,13 @@ export default function EmojiPicker({ disabled, value, setValue, alignRight = fa
         color={theme.palette.primary.main}
         title="Pick your emoji…"
         emoji="point_up"
-        onSelect={(emoji) => setValue(value + emoji.native)}
+        onSelect={(emoji) => setValue(value + emoji?.native)}
       />
     );
   }
 
-  const triggerPicker = (e) => {
-    e.preventDefault();
+  const triggerPicker = (event) => {
+    event.preventDefault();
     SetEmojiPicker(!emojiPickerState);
   };
 
@@ -106,14 +106,14 @@ export default function EmojiPicker({ disabled, value, setValue, alignRight = fa
           sx={{
             ...(alignRight && {
               right: -2,
-              left: 'auto !important'
-            })
+              left: 'auto !important',
+            }),
           }}
         >
           {emojiPicker}
         </PickerStyle>
         <IconButton disabled={disabled} size="small" onClick={triggerPicker}>
-          <Icon icon={smilingFaceFill} width={20} height={20} />
+          <Iconify icon={'eva:smiling-face-fill'} width={20} height={20} />
         </IconButton>
       </RootStyle>
     </ClickAwayListener>

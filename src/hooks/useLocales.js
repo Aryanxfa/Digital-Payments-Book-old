@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-// material
-import { enUS, deDE, frFR } from '@material-ui/core/locale';
+// '@mui
+import { enUS, deDE, frFR } from '@mui/material/locale';
 
 // ----------------------------------------------------------------------
 
@@ -9,21 +9,21 @@ const LANGS = [
     label: 'English',
     value: 'en',
     systemValue: enUS,
-    icon: '/static/icons/ic_flag_en.svg'
+    icon: 'https://minimal-assets-api.vercel.app/assets/icons/ic_flag_en.svg',
   },
   {
     label: 'German',
     value: 'de',
     systemValue: deDE,
 
-    icon: '/static/icons/ic_flag_de.svg'
+    icon: 'https://minimal-assets-api.vercel.app/assets/icons/ic_flag_de.svg',
   },
   {
     label: 'French',
     value: 'fr',
     systemValue: frFR,
-    icon: '/static/icons/ic_flag_fr.svg'
-  }
+    icon: 'https://minimal-assets-api.vercel.app/assets/icons/ic_flag_fr.svg',
+  },
 ];
 
 export default function useLocales() {
@@ -39,6 +39,6 @@ export default function useLocales() {
     onChangeLang: handleChangeLanguage,
     translate,
     currentLang,
-    allLang: LANGS
+    allLang: LANGS,
   };
 }

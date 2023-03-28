@@ -1,23 +1,25 @@
-import { useDispatch as useReduxDispatch, useSelector as useReduxSelector } from 'react-redux';
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
+import { useDispatch as useAppDispatch, useSelector as useAppSelector } from 'react-redux';
 import { persistStore, persistReducer } from 'redux-persist';
-//
 import { rootPersistConfig, rootReducer } from './rootReducer';
 
 // ----------------------------------------------------------------------
 
 const store = configureStore({
   reducer: persistReducer(rootPersistConfig, rootReducer),
-  middleware: getDefaultMiddleware({
-    serializableCheck: false,
-    immutableCheck: false
-  })
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+      immutableCheck: false,
+    }),
 });
 
 const persistor = persistStore(store);
 
-const useSelector = useReduxSelector;
+const { dispatch } = store;
 
-const useDispatch = () => useReduxDispatch();
+const useSelector = useAppSelector;
 
-export { store, persistor, useSelector, useDispatch };
+const useDispatch = () => useAppDispatch();
+
+export { store, persistor, dispatch, useSelector, useDispatch };

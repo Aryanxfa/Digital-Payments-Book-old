@@ -1,22 +1,23 @@
-// material
-import { Grid, Container } from '@material-ui/core';
+// @mui
+import { Grid, Container } from '@mui/material';
 // hooks
 import useSettings from '../../hooks/useSettings';
 // components
 import Page from '../../components/Page';
+// sections
 import {
-  BookingTotal,
-  BookingCheckIn,
   BookingDetails,
-  BookingCheckOut,
   BookingBookedRoom,
   BookingTotalIncomes,
   BookingRoomAvailable,
   BookingNewestBooking,
+  BookingWidgetSummary,
   BookingCheckInWidgets,
   BookingCustomerReviews,
-  BookingReservationStats
-} from '../../components/_dashboard/general-booking';
+  BookingReservationStats,
+} from '../../sections/@dashboard/general/booking';
+// assets
+import { BookingIllustration, CheckInIllustration, CheckOutIllustration } from '../../assets';
 
 // ----------------------------------------------------------------------
 
@@ -24,19 +25,19 @@ export default function GeneralBooking() {
   const { themeStretch } = useSettings();
 
   return (
-    <Page title="General: Banking | Minimal-UI">
+    <Page title="General: Banking">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
-            <BookingTotal />
+            <BookingWidgetSummary title="Total Booking" total={714000} icon={<BookingIllustration />} />
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <BookingCheckIn />
+            <BookingWidgetSummary title="Check In" total={311000} icon={<CheckInIllustration />} />
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <BookingCheckOut />
+            <BookingWidgetSummary title="Check Out" total={124000} icon={<CheckOutIllustration />} />
           </Grid>
 
           <Grid item xs={12} md={8}>

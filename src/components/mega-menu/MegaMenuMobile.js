@@ -1,16 +1,10 @@
 import PropTypes from 'prop-types';
-import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
-import listFill from '@iconify/icons-eva/list-fill';
-import menu2Fill from '@iconify/icons-eva/menu-2-fill';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
-import arrowIosBackFill from '@iconify/icons-eva/arrow-ios-back-fill';
-import arrowIosForwardFill from '@iconify/icons-eva/arrow-ios-forward-fill';
-// material
+// @mui
 import {
   Box,
   List,
-  Link,
   Stack,
   Drawer,
   Button,
@@ -19,24 +13,75 @@ import {
   IconButton,
   ListItemText,
   ListItemIcon,
-  ListItemButton
-} from '@material-ui/core';
+  ListItemButton,
+} from '@mui/material';
+// config
+import { NAVBAR, ICON } from '../../config';
 //
 import Logo from '../Logo';
+import Iconify from '../Iconify';
 import Scrollbar from '../Scrollbar';
 
 // ----------------------------------------------------------------------
 
-const ICON_SIZE = 22;
-const PADDING = 2.5;
-const DRAWER_WIDTH = 260;
+MegaMenuMobile.propTypes = {
+  navConfig: PropTypes.array,
+};
+
+export default function MegaMenuMobile({ navConfig }) {
+  const { pathname } = useLocation();
+
+  const [openDrawer, setOpenDrawer] = useState(false);
+
+  useEffect(() => {
+    if (openDrawer) {
+      handleDrawerClose();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  const handleDrawerOpen = () => {
+    setOpenDrawer(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpenDrawer(false);
+  };
+
+  return (
+    <>
+      <Button variant="contained" onClick={handleDrawerOpen} startIcon={<Iconify icon={'eva:menu-2-fill'} />}>
+        Menu Mobile
+      </Button>
+
+      <Drawer
+        open={openDrawer}
+        onClose={handleDrawerClose}
+        ModalProps={{ keepMounted: true }}
+        PaperProps={{ sx: { pb: 5, width: NAVBAR.DASHBOARD_WIDTH } }}
+      >
+        <Scrollbar>
+          <Logo sx={{ mx: 2.5, my: 3 }} />
+
+          <Typography variant="h6" sx={{ px: 2, mb: 2, display: 'flex', alignItems: 'center' }}>
+            <Box component={Iconify} icon={'eva:list-fill'} sx={{ mr: 1, width: 24, height: 24 }} /> Categories
+          </Typography>
+
+          {navConfig.map((parent) => (
+            <SubMenu key={parent.title} parent={parent} pathname={pathname} />
+          ))}
+        </Scrollbar>
+      </Drawer>
+    </>
+  );
+}
 
 // ----------------------------------------------------------------------
 
 ParentItem.propTypes = {
-  icon: PropTypes.node,
+  hasSub: PropTypes.bool,
+  icon: PropTypes.any,
   title: PropTypes.string,
-  hasSub: PropTypes.bool
 };
 
 function ParentItem({ icon, title, hasSub, ...other }) {
@@ -44,14 +89,21 @@ function ParentItem({ icon, title, hasSub, ...other }) {
     <ListItemButton sx={{ textTransform: 'capitalize', height: 44 }} {...other}>
       <ListItemIcon sx={{ width: 22, height: 22 }}>{icon}</ListItemIcon>
       <ListItemText primaryTypographyProps={{ typography: 'body2' }}>{title}</ListItemText>
-      {hasSub && <Box component={Icon} icon={arrowIosForwardFill} />}
+      {hasSub && <Box component={Iconify} icon={'eva:arrow-ios-forward-fill'} />}
     </ListItemButton>
   );
 }
 
+// ----------------------------------------------------------------------
+
 SubMenu.propTypes = {
-  parent: PropTypes.object,
-  pathname: PropTypes.string
+  parent: PropTypes.shape({
+    title: PropTypes.string,
+    icon: PropTypes.any,
+    path: PropTypes.string,
+    children: PropTypes.array,
+  }),
+  pathname: PropTypes.string,
 };
 
 function SubMenu({ parent, pathname }) {
@@ -82,11 +134,11 @@ function SubMenu({ parent, pathname }) {
           open={open}
           onClose={handleClose}
           ModalProps={{ keepMounted: true }}
-          PaperProps={{ sx: { width: DRAWER_WIDTH - 12 } }}
+          PaperProps={{ sx: { width: NAVBAR.DASHBOARD_WIDTH - 12 } }}
         >
           <Stack direction="row" alignItems="center" px={1} py={1.5}>
             <IconButton onClick={handleClose}>
-              <Icon icon={arrowIosBackFill} width={20} height={20} />
+              <Iconify icon={'eva:arrow-ios-back-fill'} width={20} height={20} />
             </IconButton>
             <Typography noWrap variant="subtitle1" sx={{ ml: 1, textTransform: 'capitalize' }}>
               {title}
@@ -110,24 +162,25 @@ function SubMenu({ parent, pathname }) {
                       {subheader}
                     </Typography>
                     {items.map((link) => (
-                      <ListItemButton
-                        disableGutters
-                        key={link.title}
-                        component={RouterLink}
-                        to={link.path}
-                        sx={{ px: 1.5 }}
-                      >
+                      <ListItemButton key={link.title} component={RouterLink} to={link.path} sx={{ px: 1.5 }}>
                         <ListItemIcon
                           sx={{
                             mr: 0.5,
-                            width: ICON_SIZE,
-                            height: ICON_SIZE,
+                            width: ICON.NAVBAR_ITEM,
+                            height: ICON.NAVBAR_ITEM,
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
                           }}
                         >
-                          <Box sx={{ width: 4, height: 4, bgcolor: 'currentColor', borderRadius: '50%' }} />
+                          <Box
+                            sx={{
+                              width: 4,
+                              height: 4,
+                              bgcolor: 'currentColor',
+                              borderRadius: '50%',
+                            }}
+                          />
                         </ListItemIcon>
                         <ListItemText
                           primary={link.title}
@@ -146,56 +199,4 @@ function SubMenu({ parent, pathname }) {
   }
 
   return <ParentItem component={RouterLink} title={title} icon={icon} to={path} />;
-}
-
-MegaMenuMobile.propTypes = {
-  navConfig: PropTypes.array
-};
-
-export default function MegaMenuMobile({ navConfig }) {
-  const { pathname } = useLocation();
-  const [openDrawer, setOpenDrawer] = useState(false);
-
-  useEffect(() => {
-    if (openDrawer) {
-      handleDrawerClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
-  const handleDrawerOpen = () => {
-    setOpenDrawer(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpenDrawer(false);
-  };
-
-  return (
-    <>
-      <Button variant="contained" onClick={handleDrawerOpen} startIcon={<Icon icon={menu2Fill} />}>
-        Menu Mobile
-      </Button>
-
-      <Drawer
-        open={openDrawer}
-        onClose={handleDrawerClose}
-        ModalProps={{ keepMounted: true }}
-        PaperProps={{ sx: { pb: 5, width: DRAWER_WIDTH } }}
-      >
-        <Scrollbar>
-          <Link component={RouterLink} to="/" sx={{ display: 'inline-flex' }}>
-            <Logo sx={{ mx: PADDING, my: 3 }} />
-          </Link>
-          <Typography variant="h6" sx={{ px: 2, mb: 2, display: 'flex', alignItems: 'center' }}>
-            <Box component={Icon} icon={listFill} sx={{ mr: 1, width: 24, height: 24 }} /> Categories
-          </Typography>
-
-          {navConfig.map((parent) => (
-            <SubMenu key={parent.title} parent={parent} pathname={pathname} />
-          ))}
-        </Scrollbar>
-      </Drawer>
-    </>
-  );
 }

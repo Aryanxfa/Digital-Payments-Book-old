@@ -1,24 +1,75 @@
+import PropTypes from 'prop-types';
+import { AnimatePresence, m } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Icon } from '@iconify/react';
-import closeFill from '@iconify/icons-eva/close-fill';
-import options2Fill from '@iconify/icons-eva/options-2-fill';
-// material
-import { Box, Backdrop, Paper, Tooltip, Divider, Typography, Stack } from '@material-ui/core';
+// @mui
+import { alpha, styled } from '@mui/material/styles';
+import { Backdrop, Divider, Typography, Stack, FormControlLabel, Radio } from '@mui/material';
+// hooks
+import useSettings from '../../hooks/useSettings';
+// utils
+import cssStyles from '../../utils/cssStyles';
+// config
+import { NAVBAR, defaultSettings } from '../../config';
 //
+import Iconify from '../Iconify';
 import Scrollbar from '../Scrollbar';
-import { MIconButton } from '../@material-extend';
+import { IconButtonAnimate, varFade } from '../animate';
+//
+import ToggleButton from './ToggleButton';
 import SettingMode from './SettingMode';
-import SettingColor from './SettingColor';
+import SettingLayout from './SettingLayout';
 import SettingStretch from './SettingStretch';
 import SettingDirection from './SettingDirection';
 import SettingFullscreen from './SettingFullscreen';
+import SettingColorPresets from './SettingColorPresets';
 
 // ----------------------------------------------------------------------
 
-const DRAWER_WIDTH = 260;
+const RootStyle = styled(m.div)(({ theme }) => ({
+  ...cssStyles(theme).bgBlur({ color: theme.palette.background.paper, opacity: 0.92 }),
+  top: 0,
+  right: 0,
+  bottom: 0,
+  display: 'flex',
+  position: 'fixed',
+  overflow: 'hidden',
+  width: NAVBAR.BASE_WIDTH,
+  flexDirection: 'column',
+  margin: theme.spacing(2),
+  paddingBottom: theme.spacing(3),
+  zIndex: theme.zIndex.drawer + 3,
+  borderRadius: Number(theme.shape.borderRadius) * 1.5,
+  boxShadow: `-24px 12px 32px -4px ${alpha(
+    theme.palette.mode === 'light' ? theme.palette.grey[500] : theme.palette.common.black,
+    0.16
+  )}`,
+}));
+
+// ----------------------------------------------------------------------
 
 export default function Settings() {
+  const { themeMode, themeDirection, themeColorPresets, themeStretch, themeLayout, onResetSetting } = useSettings();
   const [open, setOpen] = useState(false);
+
+  const notDefault =
+    themeMode !== defaultSettings.themeMode ||
+    themeDirection !== defaultSettings.themeDirection ||
+    themeColorPresets !== defaultSettings.themeColorPresets ||
+    themeLayout !== defaultSettings.themeLayout ||
+    themeStretch !== defaultSettings.themeStretch;
+
+  const varSidebar =
+    themeDirection !== 'rtl'
+      ? varFade({
+          distance: NAVBAR.BASE_WIDTH,
+          durationIn: 0.32,
+          durationOut: 0.32,
+        }).inRight
+      : varFade({
+          distance: NAVBAR.BASE_WIDTH,
+          durationIn: 0.32,
+          durationOut: 0.32,
+        }).inLeft;
 
   useEffect(() => {
     if (open) {
@@ -38,94 +89,90 @@ export default function Settings() {
 
   return (
     <>
-      <Backdrop sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open} onClick={handleClose} />
+      <Backdrop
+        open={open}
+        onClick={handleClose}
+        sx={{ background: 'transparent', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      />
 
-      <Box
-        sx={{
-          top: 12,
-          bottom: 12,
-          right: 0,
-          position: 'fixed',
-          zIndex: 2001,
-          ...(open && { right: 12 })
-        }}
-      >
-        <Box
-          sx={{
-            p: 0.5,
-            px: '4px',
-            mt: -3,
-            left: -44,
-            top: '50%',
-            color: 'grey.800',
-            position: 'absolute',
-            bgcolor: 'common.white',
-            borderRadius: '24px 0 16px 24px',
-            boxShadow: (theme) => theme.customShadows.z12
-          }}
-        >
-          <Tooltip title="Settings">
-            <MIconButton
-              color="inherit"
-              onClick={handleToggle}
-              sx={{
-                p: 0,
-                width: 40,
-                height: 40,
-                transition: (theme) => theme.transitions.create('all'),
-                '&:hover': { color: 'primary.main', bgcolor: 'transparent' }
-              }}
-            >
-              <Icon icon={open ? closeFill : options2Fill} width={20} height={20} />
-            </MIconButton>
-          </Tooltip>
-        </Box>
+      {!open && <ToggleButton open={open} notDefault={notDefault} onToggle={handleToggle} />}
 
-        <Paper
-          sx={{
-            height: 1,
-            width: '0px',
-            overflow: 'hidden',
-            boxShadow: (theme) => theme.customShadows.z24,
-            transition: (theme) => theme.transitions.create('width'),
-            ...(open && { width: DRAWER_WIDTH })
-          }}
-        >
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 2, pr: 1, pl: 2.5 }}>
-            <Typography variant="subtitle1">Settings</Typography>
-            <MIconButton onClick={handleClose}>
-              <Icon icon={closeFill} width={20} height={20} />
-            </MIconButton>
-          </Stack>
-          <Divider />
-
-          <Scrollbar sx={{ height: 1 }}>
-            <Stack spacing={4} sx={{ pt: 3, px: 3, pb: 15 }}>
-              <Stack spacing={1.5}>
-                <Typography variant="subtitle2">Mode</Typography>
-                <SettingMode />
+      <AnimatePresence>
+        {open && (
+          <>
+            <RootStyle {...varSidebar}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 2, pr: 1, pl: 2.5 }}>
+                <Typography variant="subtitle1">Settings</Typography>
+                <div>
+                  <IconButtonAnimate onClick={onResetSetting}>
+                    <Iconify icon={'ic:round-refresh'} width={20} height={20} />
+                  </IconButtonAnimate>
+                  <IconButtonAnimate onClick={handleClose}>
+                    <Iconify icon={'eva:close-fill'} width={20} height={20} />
+                  </IconButtonAnimate>
+                </div>
               </Stack>
 
-              <Stack spacing={1.5}>
-                <Typography variant="subtitle2">Direction</Typography>
-                <SettingDirection />
-              </Stack>
+              <Divider sx={{ borderStyle: 'dashed' }} />
 
-              <Stack spacing={1.5}>
-                <Typography variant="subtitle2">Color</Typography>
-                <SettingColor />
-              </Stack>
+              <Scrollbar sx={{ flexGrow: 1 }}>
+                <Stack spacing={3} sx={{ p: 3 }}>
+                  <Stack spacing={1.5}>
+                    <Typography variant="subtitle2">Mode</Typography>
+                    <SettingMode />
+                  </Stack>
 
-              <Stack spacing={1.5}>
-                <Typography variant="subtitle2">Stretch</Typography>
-                <SettingStretch />
-              </Stack>
+                  <Stack spacing={1.5}>
+                    <Typography variant="subtitle2">Direction</Typography>
+                    <SettingDirection />
+                  </Stack>
 
-              <SettingFullscreen />
-            </Stack>
-          </Scrollbar>
-        </Paper>
-      </Box>
+                  <Stack spacing={1.5}>
+                    <Typography variant="subtitle2">Layout</Typography>
+                    <SettingLayout />
+                  </Stack>
+
+                  <Stack spacing={1.5}>
+                    <Typography variant="subtitle2">Presets</Typography>
+                    <SettingColorPresets />
+                  </Stack>
+
+                  <Stack spacing={1.5}>
+                    <Typography variant="subtitle2">Stretch</Typography>
+                    <SettingStretch />
+                  </Stack>
+
+                  <SettingFullscreen />
+                </Stack>
+              </Scrollbar>
+            </RootStyle>
+          </>
+        )}
+      </AnimatePresence>
     </>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+BoxMask.propTypes = {
+  value: PropTypes.string,
+};
+
+export function BoxMask({ value }) {
+  return (
+    <FormControlLabel
+      label=""
+      value={value}
+      control={<Radio sx={{ display: 'none' }} />}
+      sx={{
+        m: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        position: 'absolute',
+      }}
+    />
   );
 }

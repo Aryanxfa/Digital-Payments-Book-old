@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
-// material
-import { styled } from '@material-ui/core/styles';
-import { Typography, Box } from '@material-ui/core';
+// @mui
+import { styled } from '@mui/material/styles';
+import { Typography } from '@mui/material';
+//
+import Image from './Image';
 
 // ----------------------------------------------------------------------
 
@@ -12,7 +14,7 @@ const RootStyle = styled('div')(({ theme }) => ({
   alignItems: 'center',
   flexDirection: 'column',
   justifyContent: 'center',
-  padding: theme.spacing(8, 2)
+  padding: theme.spacing(8, 2),
 }));
 
 // ----------------------------------------------------------------------
@@ -20,16 +22,17 @@ const RootStyle = styled('div')(({ theme }) => ({
 EmptyContent.propTypes = {
   title: PropTypes.string.isRequired,
   img: PropTypes.string,
-  description: PropTypes.string
+  description: PropTypes.string,
 };
 
 export default function EmptyContent({ title, description, img, ...other }) {
   return (
     <RootStyle {...other}>
-      <Box
-        component="img"
+      <Image
+        disabledEffect
+        visibleByDefault
         alt="empty content"
-        src={img || '/static/illustrations/illustration_empty_content.svg'}
+        src={img || 'https://minimal-assets-api.vercel.app/assets/illustrations/illustration_empty_content.svg'}
         sx={{ height: 240, mb: 3 }}
       />
 

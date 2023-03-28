@@ -1,5 +1,3 @@
-import { capitalize } from 'lodash';
-
 // ----------------------------------------------------------------------
 
 const PRIMARY_NAME = ['A', 'N', 'H', 'L', 'Q', '9', '8'];
@@ -9,7 +7,7 @@ const WARNING_NAME = ['P', 'E', 'R', 'S', 'C', 'U', '6', '7'];
 const ERROR_NAME = ['V', 'W', 'X', 'M', 'Z'];
 
 function getFirstCharacter(name) {
-  return capitalize(name && name.charAt(0));
+  return name && name.charAt(0).toUpperCase();
 }
 
 function getAvatarColor(name) {
@@ -24,6 +22,6 @@ function getAvatarColor(name) {
 export default function createAvatar(name) {
   return {
     name: getFirstCharacter(name),
-    color: getAvatarColor(name)
+    color: getAvatarColor(name),
   };
 }

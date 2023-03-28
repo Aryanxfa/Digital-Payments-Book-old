@@ -1,13 +1,13 @@
-import { isString } from 'lodash';
 import PropTypes from 'prop-types';
-import { Icon } from '@iconify/react';
+import isString from 'lodash/isString';
 import { useDropzone } from 'react-dropzone';
-import roundAddAPhoto from '@iconify/icons-ic/round-add-a-photo';
-// material
-import { alpha, styled } from '@material-ui/core/styles';
-import { Box, Typography, Paper } from '@material-ui/core';
-// utils
-import { fData } from '../../utils/formatNumber';
+// @mui
+import { Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+//
+import Image from '../Image';
+import Iconify from '../Iconify';
+import RejectionFiles from './RejectionFiles';
 
 // ----------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ const RootStyle = styled('div')(({ theme }) => ({
   margin: 'auto',
   borderRadius: '50%',
   padding: theme.spacing(1),
-  border: `1px dashed ${theme.palette.grey[500_32]}`
+  border: `1px dashed ${theme.palette.grey[500_32]}`,
 }));
 
 const DropZoneStyle = styled('div')({
@@ -35,9 +35,9 @@ const DropZoneStyle = styled('div')({
   '&:hover': {
     cursor: 'pointer',
     '& .placeholder': {
-      zIndex: 9
-    }
-  }
+      zIndex: 9,
+    },
+  },
 });
 
 const PlaceholderStyle = styled('div')(({ theme }) => ({
@@ -50,9 +50,9 @@ const PlaceholderStyle = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.neutral,
   transition: theme.transitions.create('opacity', {
     easing: theme.transitions.easing.easeInOut,
-    duration: theme.transitions.duration.shorter
+    duration: theme.transitions.duration.shorter,
   }),
-  '&:hover': { opacity: 0.72 }
+  '&:hover': { opacity: 0.72 },
 }));
 
 // ----------------------------------------------------------------------
@@ -60,69 +60,35 @@ const PlaceholderStyle = styled('div')(({ theme }) => ({
 UploadAvatar.propTypes = {
   error: PropTypes.bool,
   file: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  caption: PropTypes.node,
-  sx: PropTypes.object
+  helperText: PropTypes.node,
+  sx: PropTypes.object,
 };
 
-export default function UploadAvatar({ error, file, caption, sx, ...other }) {
+export default function UploadAvatar({ error, file, helperText, sx, ...other }) {
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     multiple: false,
-    ...other
+    ...other,
   });
-
-  const ShowRejectionItems = () => (
-    <Paper
-      variant="outlined"
-      sx={{
-        py: 1,
-        px: 2,
-        my: 2,
-        borderColor: 'error.light',
-        bgcolor: (theme) => alpha(theme.palette.error.main, 0.08)
-      }}
-    >
-      {fileRejections.map(({ file, errors }) => {
-        const { path, size } = file;
-        return (
-          <Box key={path} sx={{ my: 1 }}>
-            <Typography variant="subtitle2" noWrap>
-              {path} - {fData(size)}
-            </Typography>
-            {errors.map((e) => (
-              <Typography key={e.code} variant="caption" component="p">
-                - {e.message}
-              </Typography>
-            ))}
-          </Box>
-        );
-      })}
-    </Paper>
-  );
 
   return (
     <>
-      <RootStyle sx={sx}>
+      <RootStyle
+        sx={{
+          ...((isDragReject || error) && {
+            borderColor: 'error.light',
+          }),
+          ...sx,
+        }}
+      >
         <DropZoneStyle
           {...getRootProps()}
           sx={{
             ...(isDragActive && { opacity: 0.72 }),
-            ...((isDragReject || error) && {
-              color: 'error.main',
-              borderColor: 'error.light',
-              bgcolor: 'error.lighter'
-            })
           }}
         >
           <input {...getInputProps()} />
 
-          {file && (
-            <Box
-              component="img"
-              alt="avatar"
-              src={isString(file) ? file : file.preview}
-              sx={{ zIndex: 8, objectFit: 'cover' }}
-            />
-          )}
+          {file && <Image alt="avatar" src={isString(file) ? file : file.preview} sx={{ zIndex: 8 }} />}
 
           <PlaceholderStyle
             className="placeholder"
@@ -131,19 +97,22 @@ export default function UploadAvatar({ error, file, caption, sx, ...other }) {
                 opacity: 0,
                 color: 'common.white',
                 bgcolor: 'grey.900',
-                '&:hover': { opacity: 0.72 }
-              })
+                '&:hover': { opacity: 0.72 },
+              }),
+              ...((isDragReject || error) && {
+                bgcolor: 'error.lighter',
+              }),
             }}
           >
-            <Box component={Icon} icon={roundAddAPhoto} sx={{ width: 24, height: 24, mb: 1 }} />
+            <Iconify icon={'ic:round-add-a-photo'} sx={{ width: 24, height: 24, mb: 1 }} />
             <Typography variant="caption">{file ? 'Update photo' : 'Upload photo'}</Typography>
           </PlaceholderStyle>
         </DropZoneStyle>
       </RootStyle>
 
-      {caption}
+      {helperText && helperText}
 
-      {fileRejections.length > 0 && <ShowRejectionItems />}
+      {fileRejections.length > 0 && <RejectionFiles fileRejections={fileRejections} />}
     </>
   );
 }

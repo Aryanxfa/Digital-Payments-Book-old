@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 // utils
 import axios from '../../utils/axios';
+//
+import { dispatch } from '../store';
 
 // ----------------------------------------------------------------------
 
@@ -13,12 +15,12 @@ function objFromArray(array, key = 'id') {
 
 const initialState = {
   isLoading: false,
-  error: false,
+  error: null,
   contacts: { byId: {}, allIds: [] },
   conversations: { byId: {}, allIds: [] },
   activeConversationId: null,
   participants: [],
-  recipients: []
+  recipients: [],
 };
 
 const slice = createSlice({
@@ -78,7 +80,7 @@ const slice = createSlice({
         contentType,
         attachments,
         createdAt,
-        senderId
+        senderId,
       };
 
       state.conversations.byId[conversationId].messages.push(newMessage);
@@ -106,8 +108,8 @@ const slice = createSlice({
     addRecipients(state, action) {
       const recipients = action.payload;
       state.recipients = recipients;
-    }
-  }
+    },
+  },
 });
 
 // Reducer
@@ -119,7 +121,7 @@ export const { addRecipients, onSendMessage, resetActiveConversation } = slice.a
 // ----------------------------------------------------------------------
 
 export function getContacts() {
-  return async (dispatch) => {
+  return async () => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/chat/contacts');
@@ -133,7 +135,7 @@ export function getContacts() {
 // ----------------------------------------------------------------------
 
 export function getConversations() {
-  return async (dispatch) => {
+  return async () => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/chat/conversations');
@@ -147,11 +149,11 @@ export function getConversations() {
 // ----------------------------------------------------------------------
 
 export function getConversation(conversationKey) {
-  return async (dispatch) => {
+  return async () => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/chat/conversation', {
-        params: { conversationKey }
+        params: { conversationKey },
       });
       dispatch(slice.actions.getConversationSuccess(response.data.conversation));
     } catch (error) {
@@ -163,11 +165,11 @@ export function getConversation(conversationKey) {
 // ----------------------------------------------------------------------
 
 export function markConversationAsRead(conversationId) {
-  return async (dispatch) => {
+  return async () => {
     dispatch(slice.actions.startLoading());
     try {
       await axios.get('/api/chat/conversation/mark-as-seen', {
-        params: { conversationId }
+        params: { conversationId },
       });
       dispatch(slice.actions.markConversationAsReadSuccess({ conversationId }));
     } catch (error) {
@@ -179,11 +181,11 @@ export function markConversationAsRead(conversationId) {
 // ----------------------------------------------------------------------
 
 export function getParticipants(conversationKey) {
-  return async (dispatch) => {
+  return async () => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/chat/participants', {
-        params: { conversationKey }
+        params: { conversationKey },
       });
       dispatch(slice.actions.getParticipantsSuccess(response.data.participants));
     } catch (error) {

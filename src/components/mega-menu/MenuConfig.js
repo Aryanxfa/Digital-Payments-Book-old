@@ -1,36 +1,30 @@
-import { Icon } from '@iconify/react';
-import fileFill from '@iconify/icons-eva/file-fill';
-// utils
-import mockData from '../../utils/mock-data';
+// _mock_
+import { _megaMenuProducts } from '../../_mock';
+// components
+import Iconify from '../Iconify';
 
 // ----------------------------------------------------------------------
 
 const ICON_SIZE = {
   width: '100%',
-  height: '100%'
+  height: '100%',
 };
-
-const MOCK_PRODUCTS = [...Array(10)].map((_, index) => ({
-  name: mockData.text.title(index),
-  image: mockData.image.feed(index),
-  path: '#'
-}));
 
 const TAGS = [
   { name: 'Paper Cup', path: '#' },
   { name: 'Lotion Pump', path: '#' },
   { name: 'Brush Cutter', path: '#' },
   { name: 'Display Rack', path: '#' },
-  { name: 'Glass Bottle', path: '#' }
+  { name: 'Glass Bottle', path: '#' },
 ];
 
 const menuConfig = [
   {
     title: 'Parent 1',
     path: '#',
-    icon: <Icon icon={fileFill} {...ICON_SIZE} />,
+    icon: <Iconify icon={'eva:file-fill'} {...ICON_SIZE} />,
     more: { title: 'More Categories', path: '#' },
-    products: MOCK_PRODUCTS,
+    products: _megaMenuProducts,
     tags: TAGS,
     children: [
       {
@@ -40,8 +34,8 @@ const menuConfig = [
           { title: 'Livestock MachineryFeed', path: '#' },
           { title: 'Feed Processing Machinery', path: '#' },
           { title: 'Tiller', path: '#' },
-          { title: 'Harvesting Machine', path: '#' }
-        ]
+          { title: 'Harvesting Machine', path: '#' },
+        ],
       },
       {
         subheader: 'Machine Tools',
@@ -50,8 +44,8 @@ const menuConfig = [
           { title: 'Lathe', path: '#' },
           { title: 'Grinding Machine ', path: '#' },
           { title: 'Drilling Machine ', path: '#' },
-          { title: 'Milling Machine ', path: '#' }
-        ]
+          { title: 'Milling Machine ', path: '#' },
+        ],
       },
       {
         subheader: 'Other Machinery & Parts',
@@ -67,8 +61,8 @@ const menuConfig = [
           { title: 'Chemical Equipment & Machinery', path: '#' },
           { title: 'Mixing Equipment', path: '#' },
           { title: 'Machinery for Garment, Shoes & Accessories', path: '#' },
-          { title: 'Crushing & Culling Machine', path: '#' }
-        ]
+          { title: 'Crushing & Culling Machine', path: '#' },
+        ],
       },
       {
         subheader: 'Plastic & Woodworking Machinery',
@@ -77,8 +71,8 @@ const menuConfig = [
           { title: 'Woodworking Machinery', path: '#' },
           { title: 'Blow Molding Machine', path: '#' },
           { title: 'Plastic Recycling Machine', path: '#' },
-          { title: 'Injection Molding Machine', path: '#' }
-        ]
+          { title: 'Injection Molding Machine', path: '#' },
+        ],
       },
       {
         subheader: 'Construction Machinery',
@@ -87,17 +81,17 @@ const menuConfig = [
           { title: 'Lifting Equipment', path: '#' },
           { title: 'Excavator', path: '#' },
           { title: 'Concrete Machinery', path: '#' },
-          { title: 'Stone Processing Machinery', path: '#' }
-        ]
-      }
-    ]
+          { title: 'Stone Processing Machinery', path: '#' },
+        ],
+      },
+    ],
   },
   {
     title: 'Parent 2',
     path: '#',
-    icon: <Icon icon={fileFill} {...ICON_SIZE} />,
+    icon: <Iconify icon={'eva:file-fill'} {...ICON_SIZE} />,
     more: { title: 'More Categories', path: '#' },
-    products: MOCK_PRODUCTS,
+    products: _megaMenuProducts,
     tags: TAGS,
     children: [
       {
@@ -107,10 +101,9 @@ const menuConfig = [
           { title: 'Power Bank', path: '#' },
           { title: 'Mobile Phone LCD', path: '#' },
           { title: 'Bluetooth Headset', path: '#' },
-          { title: 'Mobile Phone', path: '#' }
-        ]
+          { title: 'Mobile Phone', path: '#' },
+        ],
       },
-
       {
         subheader: 'Audio & Video',
         items: [
@@ -125,8 +118,8 @@ const menuConfig = [
           { title: 'Portable Audio Appliance', path: '#' },
           { title: 'Home Theatre System', path: '#' },
           { title: 'HDMI Cable', path: '#' },
-          { title: 'Radio', path: '#' }
-        ]
+          { title: 'Radio', path: '#' },
+        ],
       },
       {
         subheader: 'Household Appliances',
@@ -142,8 +135,8 @@ const menuConfig = [
           { title: 'Entertainment Electronics', path: '#' },
           { title: 'Electrical Kettle', path: '#' },
           { title: 'Food Blender', path: '#' },
-          { title: 'Dehumidifier', path: '#' }
-        ]
+          { title: 'Dehumidifier', path: '#' },
+        ],
       },
       {
         subheader: 'Digital Devices',
@@ -152,21 +145,21 @@ const menuConfig = [
           { title: 'Wearable Devices', path: '#' },
           { title: 'Digital Photo Frame', path: '#' },
           { title: 'Digital Camera', path: '#' },
-          { title: 'Smart Glasses', path: '#' }
-        ]
-      }
-    ]
+          { title: 'Smart Glasses', path: '#' },
+        ],
+      },
+    ],
   },
   {
     title: 'Parent 3',
     path: '#',
-    icon: <Icon icon={fileFill} {...ICON_SIZE} />
+    icon: <Iconify icon={'eva:file-fill'} {...ICON_SIZE} />,
   },
   {
     title: 'Parent 4',
     path: '#',
-    icon: <Icon icon={fileFill} {...ICON_SIZE} />
-  }
+    icon: <Iconify icon={'eva:file-fill'} {...ICON_SIZE} />,
+  },
 ];
 
 export default menuConfig;

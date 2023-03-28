@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 // utils
 import axios from '../../utils/axios';
+//
+import { dispatch } from '../store';
 
 // ----------------------------------------------------------------------
 
@@ -13,9 +15,9 @@ function objFromArray(array, key = 'id') {
 
 const initialState = {
   isLoading: false,
-  error: false,
+  error: null,
   mails: { byId: {}, allIds: [] },
-  labels: []
+  labels: [],
 };
 
 const slice = createSlice({
@@ -56,8 +58,8 @@ const slice = createSlice({
       if (!state.mails.allIds.includes(mail.id)) {
         state.mails.allIds.push(mail.id);
       }
-    }
-  }
+    },
+  },
 });
 
 // Reducer
@@ -66,7 +68,7 @@ export default slice.reducer;
 // ----------------------------------------------------------------------
 
 export function getLabels() {
-  return async (dispatch) => {
+  return async () => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/mail/labels');
@@ -80,7 +82,7 @@ export function getLabels() {
 // ----------------------------------------------------------------------
 
 export function getMails(params) {
-  return async (dispatch) => {
+  return async () => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/mail/mails', { params });
@@ -94,11 +96,11 @@ export function getMails(params) {
 // ----------------------------------------------------------------------
 
 export function getMail(mailId) {
-  return async (dispatch) => {
+  return async () => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/mail/mail', {
-        params: { mailId }
+        params: { mailId },
       });
       dispatch(slice.actions.getMailSuccess(response.data.mail));
     } catch (error) {

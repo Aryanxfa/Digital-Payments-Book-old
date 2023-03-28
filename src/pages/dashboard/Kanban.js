@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
-import { useSnackbar } from 'notistack5';
+// @mui
+import { Container, Stack } from '@mui/material';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-// material
-import { Container, Stack, Skeleton, Grid } from '@material-ui/core';
 // redux
 import { useDispatch, useSelector } from '../../redux/store';
 import { getBoard, persistColumn, persistCard } from '../../redux/slices/kanban';
@@ -11,23 +10,14 @@ import { PATH_DASHBOARD } from '../../routes/paths';
 // components
 import Page from '../../components/Page';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { KanbanColumn, KanbanColumnAdd } from '../../components/_dashboard/kanban';
+import { SkeletonKanbanColumn } from '../../components/skeleton';
+// sections
+import { KanbanColumn, KanbanColumnAdd } from '../../sections/@dashboard/kanban';
 
 // ----------------------------------------------------------------------
 
-const SkeletonLoad = (
-  <>
-    {[...Array(3)].map((_, index) => (
-      <Grid item xs={12} md={3} key={index}>
-        <Skeleton variant="rectangular" width="100%" sx={{ paddingTop: '115%', borderRadius: 2 }} />
-      </Grid>
-    ))}
-  </>
-);
-
 export default function Kanban() {
   const dispatch = useDispatch();
-  const { enqueueSnackbar } = useSnackbar();
   const { board } = useSelector((state) => state.kanban);
 
   useEffect(() => {
@@ -48,7 +38,6 @@ export default function Kanban() {
       newColumnOrder.splice(destination.index, 0, draggableId);
 
       dispatch(persistColumn(newColumnOrder));
-      enqueueSnackbar('Update success', { variant: 'success' });
       return;
     }
 
@@ -62,18 +51,15 @@ export default function Kanban() {
 
       const updatedColumn = {
         ...start,
-        cardIds: updatedCardIds
+        cardIds: updatedCardIds,
       };
 
       dispatch(
         persistCard({
-          columns: {
-            ...board.columns,
-            [updatedColumn.id]: updatedColumn
-          }
+          ...board.columns,
+          [updatedColumn.id]: updatedColumn,
         })
       );
-
       return;
     }
 
@@ -81,39 +67,36 @@ export default function Kanban() {
     startCardIds.splice(source.index, 1);
     const updatedStart = {
       ...start,
-      cardIds: startCardIds
+      cardIds: startCardIds,
     };
 
     const finishCardIds = [...finish.cardIds];
     finishCardIds.splice(destination.index, 0, draggableId);
     const updatedFinish = {
       ...finish,
-      cardIds: finishCardIds
+      cardIds: finishCardIds,
     };
 
     dispatch(
       persistCard({
-        columns: {
-          ...board.columns,
-          [updatedStart.id]: updatedStart,
-          [updatedFinish.id]: updatedFinish
-        }
+        ...board.columns,
+        [updatedStart.id]: updatedStart,
+        [updatedFinish.id]: updatedFinish,
       })
     );
-    enqueueSnackbar('Update success', { variant: 'success' });
   };
 
   return (
-    <Page title="Kanban | Minimal-UI" sx={{ height: '100%' }}>
-      <Container maxWidth={false} sx={{ height: '100%' }}>
+    <Page title="Kanban" sx={{ height: 1 }}>
+      <Container maxWidth={false} sx={{ height: 1 }}>
         <HeaderBreadcrumbs
           heading="Kanban"
           links={[
             {
               name: 'Dashboard',
-              href: PATH_DASHBOARD.root
+              href: PATH_DASHBOARD.root,
             },
-            { name: 'Kanban' }
+            { name: 'Kanban' },
           ]}
         />
         <DragDropContext onDragEnd={onDragEnd}>
@@ -127,12 +110,13 @@ export default function Kanban() {
                 spacing={3}
                 sx={{ height: 'calc(100% - 32px)', overflowY: 'hidden' }}
               >
-                {board?.columnOrder?.map((columnId, index) => {
-                  const column = board.columns[columnId];
-                  return <KanbanColumn index={index} key={columnId} column={column} />;
-                })}
-
-                {!board?.columnOrder.length && SkeletonLoad}
+                {!board.columnOrder.length ? (
+                  <SkeletonKanbanColumn />
+                ) : (
+                  board.columnOrder.map((columnId, index) => (
+                    <KanbanColumn index={index} key={columnId} column={board.columns[columnId]} />
+                  ))
+                )}
 
                 {provided.placeholder}
                 <KanbanColumnAdd />

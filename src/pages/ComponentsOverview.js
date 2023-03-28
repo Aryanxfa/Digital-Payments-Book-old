@@ -1,36 +1,34 @@
-// material
-import { styled } from '@material-ui/core/styles';
-import { Container } from '@material-ui/core';
+// @mui
+import { styled } from '@mui/material/styles';
+import { Container } from '@mui/material';
 // components
 import Page from '../components/Page';
-import {
-  ComponentHero,
-  ComponentOther,
-  ComponentFoundation,
-  ComponentMaterialUI
-} from '../components/_external-pages/components-overview';
+// sections
+import { ComponentHero, ComponentOther, ComponentFoundation, ComponentMUI } from '../sections/overview';
 
 // ----------------------------------------------------------------------
 
-const RootStyle = styled(Page)(({ theme }) => ({
+const RootStyle = styled('div')(({ theme }) => ({
   paddingTop: theme.spacing(8),
   paddingBottom: theme.spacing(15),
   [theme.breakpoints.up('md')]: {
-    paddingTop: theme.spacing(11)
-  }
+    paddingTop: theme.spacing(11),
+  },
 }));
 
 // ----------------------------------------------------------------------
 
 export default function ComponentsOverview() {
   return (
-    <RootStyle title="Components Overview | Minimal-UI">
-      <ComponentHero />
-      <Container maxWidth="lg">
-        <ComponentFoundation />
-        <ComponentMaterialUI />
-        <ComponentOther />
-      </Container>
-    </RootStyle>
+    <Page title="Components Overview">
+      <RootStyle>
+        <ComponentHero />
+        <Container>
+          <ComponentFoundation />
+          <ComponentMUI />
+          <ComponentOther />
+        </Container>
+      </RootStyle>
+    </Page>
   );
 }

@@ -1,63 +1,87 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { sentenceCase } from 'change-case';
 import { useParams } from 'react-router-dom';
-// material
-import { Box, Card, Divider, Skeleton, Container, Typography, Pagination } from '@material-ui/core';
-// redux
-import { useDispatch, useSelector } from '../../redux/store';
-import { getPost, getRecentPosts } from '../../redux/slices/blog';
+// @mui
+import { Box, Card, Divider, Container, Typography, Pagination } from '@mui/material';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
 import useSettings from '../../hooks/useSettings';
+import useIsMountedRef from '../../hooks/useIsMountedRef';
+// utils
+import axios from '../../utils/axios';
 // components
 import Page from '../../components/Page';
 import Markdown from '../../components/Markdown';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
+import { SkeletonPost } from '../../components/skeleton';
+// sections
 import {
   BlogPostHero,
   BlogPostTags,
   BlogPostRecent,
   BlogPostCommentList,
-  BlogPostCommentForm
-} from '../../components/_dashboard/blog';
+  BlogPostCommentForm,
+} from '../../sections/@dashboard/blog';
 
 // ----------------------------------------------------------------------
 
-const SkeletonLoad = (
-  <>
-    <Skeleton width="100%" height={560} variant="rectangular" sx={{ borderRadius: 2 }} />
-    <Box sx={{ mt: 3, display: 'flex', alignItems: 'center' }}>
-      <Skeleton variant="circular" width={64} height={64} />
-      <Box sx={{ flexGrow: 1, ml: 2 }}>
-        <Skeleton variant="text" height={20} />
-        <Skeleton variant="text" height={20} />
-        <Skeleton variant="text" height={20} />
-      </Box>
-    </Box>
-  </>
-);
-
 export default function BlogPost() {
   const { themeStretch } = useSettings();
-  const dispatch = useDispatch();
+
+  const isMountedRef = useIsMountedRef();
+
   const { title } = useParams();
-  const { post, error, recentPosts } = useSelector((state) => state.blog);
+
+  const [recentPosts, setRecentPosts] = useState([]);
+
+  const [post, setPost] = useState(null);
+
+  const [error, setError] = useState(null);
+
+  const getPost = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/blog/post', {
+        params: { title },
+      });
+
+      if (isMountedRef.current) {
+        setPost(response.data.post);
+      }
+    } catch (error) {
+      console.error(error);
+      setError(error.message);
+    }
+  }, [isMountedRef, title]);
+
+  const getRecentPosts = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/blog/posts/recent', {
+        params: { title },
+      });
+
+      if (isMountedRef.current) {
+        setRecentPosts(response.data.recentPosts);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [isMountedRef, title]);
 
   useEffect(() => {
-    dispatch(getPost(title));
-    dispatch(getRecentPosts(title));
-  }, [dispatch, title]);
+    getPost();
+    getRecentPosts();
+  }, [getRecentPosts, getPost]);
 
   return (
-    <Page title="Blog: Post Details | Minimal-UI">
+    <Page title="Blog: Post Details">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Post Details"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             { name: 'Blog', href: PATH_DASHBOARD.blog.root },
-            { name: sentenceCase(title) }
+            { name: sentenceCase(title) },
           ]}
         />
 
@@ -96,11 +120,11 @@ export default function BlogPost() {
           </Card>
         )}
 
-        {!post && SkeletonLoad}
+        {!post && !error && <SkeletonPost />}
 
-        {error && <Typography variant="h6">404 Post not found</Typography>}
+        {error && <Typography variant="h6">404 {error}!</Typography>}
 
-        {recentPosts.length > 0 && <BlogPostRecent posts={recentPosts} />}
+        <BlogPostRecent posts={recentPosts} />
       </Container>
     </Page>
   );

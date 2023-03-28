@@ -1,29 +1,29 @@
-import { orderBy } from 'lodash';
-import { Icon } from '@iconify/react';
-import plusFill from '@iconify/icons-eva/plus-fill';
+import orderBy from 'lodash/orderBy';
 import { Link as RouterLink } from 'react-router-dom';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useEffect, useCallback, useState } from 'react';
-// material
-import { Box, Grid, Button, Skeleton, Container, Stack } from '@material-ui/core';
-// redux
-import { useDispatch, useSelector } from '../../redux/store';
-import { getPostsInitial, getMorePosts } from '../../redux/slices/blog';
+// @mui
+import { Grid, Button, Container, Stack } from '@mui/material';
 // hooks
 import useSettings from '../../hooks/useSettings';
+import useIsMountedRef from '../../hooks/useIsMountedRef';
+// utils
+import axios from '../../utils/axios';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // components
 import Page from '../../components/Page';
+import Iconify from '../../components/Iconify';
+import { SkeletonPostItem } from '../../components/skeleton';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../../components/_dashboard/blog';
+// sections
+import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../../sections/@dashboard/blog';
 
 // ----------------------------------------------------------------------
 
 const SORT_OPTIONS = [
   { value: 'latest', label: 'Latest' },
   { value: 'popular', label: 'Popular' },
-  { value: 'oldest', label: 'Oldest' }
+  { value: 'oldest', label: 'Oldest' },
 ];
 
 // ----------------------------------------------------------------------
@@ -41,52 +41,55 @@ const applySort = (posts, sortBy) => {
   return posts;
 };
 
-const SkeletonLoad = (
-  <Grid container spacing={3} sx={{ mt: 2 }}>
-    {[...Array(4)].map((_, index) => (
-      <Grid item xs={12} md={3} key={index}>
-        <Skeleton variant="rectangular" width="100%" sx={{ height: 200, borderRadius: 2 }} />
-        <Box sx={{ display: 'flex', mt: 1.5 }}>
-          <Skeleton variant="circular" sx={{ width: 40, height: 40 }} />
-          <Skeleton variant="text" sx={{ mx: 1, flexGrow: 1 }} />
-        </Box>
-      </Grid>
-    ))}
-  </Grid>
-);
-
 export default function BlogPosts() {
   const { themeStretch } = useSettings();
-  const dispatch = useDispatch();
+
+  const isMountedRef = useIsMountedRef();
+
+  const [posts, setPosts] = useState([]);
+
   const [filters, setFilters] = useState('latest');
-  const { posts, hasMore, index, step } = useSelector((state) => state.blog);
+
   const sortedPosts = applySort(posts, filters);
-  const onScroll = useCallback(() => dispatch(getMorePosts()), [dispatch]);
+
+  const getAllPosts = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/blog/posts/all');
+
+      if (isMountedRef.current) {
+        setPosts(response.data.posts);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [isMountedRef]);
 
   useEffect(() => {
-    dispatch(getPostsInitial(index, step));
-  }, [dispatch, index, step]);
+    getAllPosts();
+  }, [getAllPosts]);
 
-  const handleChangeSort = (event) => {
-    setFilters(event.target.value);
+  const handleChangeSort = (value) => {
+    if (value) {
+      setFilters(value);
+    }
   };
 
   return (
-    <Page title="Blog: Posts | Minimal-UI">
+    <Page title="Blog: Posts">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Blog"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             { name: 'Blog', href: PATH_DASHBOARD.blog.root },
-            { name: 'Posts' }
+            { name: 'Posts' },
           ]}
           action={
             <Button
               variant="contained"
               component={RouterLink}
               to={PATH_DASHBOARD.blog.newPost}
-              startIcon={<Icon icon={plusFill} />}
+              startIcon={<Iconify icon={'eva:plus-fill'} />}
             >
               New Post
             </Button>
@@ -98,19 +101,17 @@ export default function BlogPosts() {
           <BlogPostsSort query={filters} options={SORT_OPTIONS} onSort={handleChangeSort} />
         </Stack>
 
-        <InfiniteScroll
-          next={onScroll}
-          hasMore={hasMore}
-          loader={SkeletonLoad}
-          dataLength={posts.length}
-          style={{ overflow: 'inherit' }}
-        >
-          <Grid container spacing={3}>
-            {sortedPosts.map((post, index) => (
-              <BlogPostCard key={post.id} post={post} index={index} />
-            ))}
-          </Grid>
-        </InfiniteScroll>
+        <Grid container spacing={3}>
+          {(!posts.length ? [...Array(12)] : sortedPosts).map((post, index) =>
+            post ? (
+              <Grid key={post.id} item xs={12} sm={6} md={(index === 0 && 6) || 3}>
+                <BlogPostCard post={post} index={index} />
+              </Grid>
+            ) : (
+              <SkeletonPostItem key={index} />
+            )
+          )}
+        </Grid>
       </Container>
     </Page>
   );

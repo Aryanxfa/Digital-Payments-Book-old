@@ -1,13 +1,15 @@
 import PropTypes from 'prop-types';
-// material
-import { styled } from '@material-ui/core/styles';
+// @mui
+import { styled } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-const RootStyle = styled('span')(({ theme, styleProps }) => {
-  const { size, status } = styleProps;
+const RootStyle = styled('span')(({ theme, ownerState }) => {
+  const { status, size } = ownerState;
 
   return {
+    width: 10,
+    height: 10,
     display: 'flex',
     borderRadius: '50%',
     alignItems: 'center',
@@ -15,38 +17,36 @@ const RootStyle = styled('span')(({ theme, styleProps }) => {
     '&:before, &:after': {
       content: "''",
       borderRadius: 1,
-      backgroundColor: theme.palette.common.white
+      backgroundColor: theme.palette.common.white,
     },
 
-    ...(size === 'small'
-      ? { height: theme.spacing(1), width: theme.spacing(1) }
-      : { height: theme.spacing(1.25), width: theme.spacing(1.25) }),
+    ...(size === 'small' && { width: 8, height: 8 }),
 
-    ...(status === 'offline' && {
-      backgroundColor: 'transparent'
-    }),
+    ...(size === 'large' && { width: 12, height: 12 }),
+
+    ...(status === 'offline' && { backgroundColor: 'transparent' }),
 
     ...(status === 'away' && {
       backgroundColor: theme.palette.warning.main,
       '&:before': {
         width: 2,
         height: 4,
-        transform: 'translateX(1px) translateY(-1px)'
+        transform: 'translateX(1px) translateY(-1px)',
       },
       '&:after': {
         width: 2,
         height: 4,
-        transform: 'translateY(1px) rotate(125deg)'
-      }
+        transform: 'translateY(1px) rotate(125deg)',
+      },
     }),
 
     ...(status === 'busy' && {
       backgroundColor: theme.palette.error.main,
-      '&:before': { width: 6, height: 2 }
+      '&:before': { width: 6, height: 2 },
     }),
 
     ...(status === 'online' && {
-      backgroundColor: theme.palette.success.main
+      backgroundColor: theme.palette.success.main,
     }),
 
     ...(status === 'invisible' && {
@@ -54,23 +54,23 @@ const RootStyle = styled('span')(({ theme, styleProps }) => {
       '&:before': {
         width: 6,
         height: 6,
-        borderRadius: '50%'
-      }
+        borderRadius: '50%',
+      },
     }),
 
     ...(status === 'unread' && {
-      backgroundColor: theme.palette.info.main
-    })
+      backgroundColor: theme.palette.info.main,
+    }),
   };
 });
 
 // ----------------------------------------------------------------------
 
-export default function BadgeStatus({ size = 'medium', status = 'offline', ...other }) {
-  return <RootStyle styleProps={{ status, size }} {...other} />;
-}
-
 BadgeStatus.propTypes = {
-  size: PropTypes.oneOf(['small', 'medium']),
-  status: PropTypes.oneOf(['away', 'busy', 'unread', 'online', 'offline', 'invisible'])
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
+  status: PropTypes.oneOf(['away', 'busy', 'unread', 'online', 'offline', 'invisible']),
 };
+
+export default function BadgeStatus({ size = 'medium', status = 'offline', ...other }) {
+  return <RootStyle ownerState={{ status, size }} {...other} />;
+}

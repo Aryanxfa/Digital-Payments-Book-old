@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-// material
-import { Container, Card } from '@material-ui/core';
+// @mui
+import { Container, Card } from '@mui/material';
 // redux
 import { useDispatch } from '../../redux/store';
 import { getLabels } from '../../redux/slices/mail';
@@ -12,7 +12,7 @@ import useSettings from '../../hooks/useSettings';
 // components
 import Page from '../../components/Page';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { MailList, MailDetails, MailSidebar, MailCompose } from '../../components/_dashboard/mail';
+import { MailList, MailDetails, MailSidebar, MailCompose } from '../../sections/@dashboard/mail';
 
 // ----------------------------------------------------------------------
 
@@ -28,16 +28,16 @@ export default function Mail() {
   }, [dispatch]);
 
   return (
-    <Page title="Mail | Minimal-UI">
+    <Page title="Mail">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <HeaderBreadcrumbs
           heading="Mail"
           links={[
             {
               name: 'Dashboard',
-              href: PATH_DASHBOARD.root
+              href: PATH_DASHBOARD.root,
             },
-            { name: 'Mail' }
+            { name: 'Mail' },
           ]}
         />
         <Card sx={{ height: { md: '72vh' }, display: { md: 'flex' } }}>

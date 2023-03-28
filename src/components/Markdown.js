@@ -1,14 +1,15 @@
 import ReactMarkdown from 'react-markdown';
 // markdown plugins
 import rehypeRaw from 'rehype-raw';
-import rehypeHighlight from 'rehype-highlight';
-// material
-import { styled } from '@material-ui/core/styles';
-import { Link, Typography, Divider } from '@material-ui/core';
+// @mui
+import { styled } from '@mui/material/styles';
+import { Link, Typography, Divider } from '@mui/material';
+//
+import Image from './Image';
 
 // ----------------------------------------------------------------------
 
-const MarkdownWrapperStyle = styled('div')(({ theme }) => {
+const MarkdownStyle = styled('div')(({ theme }) => {
   const isLight = theme.palette.mode === 'light';
 
   return {
@@ -17,8 +18,8 @@ const MarkdownWrapperStyle = styled('div')(({ theme }) => {
       ...theme.typography.body1,
       paddingLeft: theme.spacing(5),
       '& li': {
-        lineHeight: 2
-      }
+        lineHeight: 2,
+      },
     },
 
     // Blockquote
@@ -29,17 +30,17 @@ const MarkdownWrapperStyle = styled('div')(({ theme }) => {
       position: 'relative',
       fontFamily: 'Georgia, serif',
       padding: theme.spacing(3, 3, 3, 8),
-      borderRadius: theme.shape.borderRadiusMd,
+      borderRadius: Number(theme.shape.borderRadius) * 2,
       backgroundColor: theme.palette.background.neutral,
       color: `${theme.palette.text.secondary} !important`,
       [theme.breakpoints.up('md')]: {
-        width: '80%'
+        width: '80%',
       },
       '& p, & span': {
         marginBottom: '0 !important',
         fontSize: 'inherit !important',
         fontFamily: 'Georgia, serif !important',
-        color: `${theme.palette.text.secondary} !important`
+        color: `${theme.palette.text.secondary} !important`,
       },
       '&:before': {
         left: 16,
@@ -48,8 +49,8 @@ const MarkdownWrapperStyle = styled('div')(({ theme }) => {
         fontSize: '3em',
         content: '"\\201C"',
         position: 'absolute',
-        color: theme.palette.text.disabled
-      }
+        color: theme.palette.text.disabled,
+      },
     },
 
     // Code Block
@@ -60,7 +61,7 @@ const MarkdownWrapperStyle = styled('div')(({ theme }) => {
       padding: theme.spacing(2),
       color: theme.palette.common.white,
       borderRadius: theme.shape.borderRadius,
-      backgroundColor: theme.palette.grey[isLight ? 900 : 500_16]
+      backgroundColor: isLight ? theme.palette.grey[900] : theme.palette.grey[500_16],
     },
     '& code': {
       fontSize: 14,
@@ -69,10 +70,22 @@ const MarkdownWrapperStyle = styled('div')(({ theme }) => {
       padding: theme.spacing(0.2, 0.5),
       color: theme.palette.warning[isLight ? 'darker' : 'lighter'],
       backgroundColor: theme.palette.warning[isLight ? 'lighter' : 'darker'],
-      '&.hljs': { padding: 0, backgroundColor: 'transparent' }
-    }
+      '&.hljs': { padding: 0, backgroundColor: 'transparent' },
+    },
   };
 });
+
+// ----------------------------------------------------------------------
+
+export default function Markdown({ ...other }) {
+  return (
+    <MarkdownStyle>
+      <ReactMarkdown rehypePlugins={[rehypeRaw]} components={components} {...other} />
+    </MarkdownStyle>
+  );
+}
+
+// ----------------------------------------------------------------------
 
 const components = {
   h1: ({ ...props }) => <Typography variant="h1" {...props} />,
@@ -82,23 +95,7 @@ const components = {
   h5: ({ ...props }) => <Typography variant="h5" {...props} />,
   h6: ({ ...props }) => <Typography variant="h6" {...props} />,
   hr: ({ ...props }) => <Divider sx={{ my: 3 }} {...props} />,
-  a: ({ ...props }) => {
-    /* eslint-disable react/prop-types */
-    const { href } = props;
-    return !href.includes('http') ? (
-      <Link {...props} />
-    ) : (
-      <Link target="_blank" rel="nofollow noreferrer noopener" {...props} />
-    );
-  }
+  img: ({ ...props }) => <Image alt={props.alt} ratio="16/9" sx={{ borderRadius: 2, my: 5 }} {...props} />,
+  a: ({ ...props }) =>
+    props.href.includes('http') ? <Link target="_blank" rel="noopener" {...props} /> : <Link {...props} />,
 };
-
-// ----------------------------------------------------------------------
-
-export default function Markdown({ ...other }) {
-  return (
-    <MarkdownWrapperStyle>
-      <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeHighlight]} components={components} {...other} />
-    </MarkdownWrapperStyle>
-  );
-}

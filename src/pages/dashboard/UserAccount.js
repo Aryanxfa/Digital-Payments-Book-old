@@ -1,108 +1,91 @@
-import { Icon } from '@iconify/react';
 import { capitalCase } from 'change-case';
-import { useState, useEffect } from 'react';
-import bellFill from '@iconify/icons-eva/bell-fill';
-import shareFill from '@iconify/icons-eva/share-fill';
-import roundVpnKey from '@iconify/icons-ic/round-vpn-key';
-import roundReceipt from '@iconify/icons-ic/round-receipt';
-import roundAccountBox from '@iconify/icons-ic/round-account-box';
-// material
-import { Container, Tab, Box, Tabs, Stack } from '@material-ui/core';
-// redux
-import { useDispatch } from '../../redux/store';
-import { getCards, getProfile, getInvoices, getAddressBook, getNotifications } from '../../redux/slices/user';
+import { useState } from 'react';
+// @mui
+import { Container, Tab, Box, Tabs } from '@mui/material';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
 import useSettings from '../../hooks/useSettings';
+// _mock_
+import { _userPayment, _userAddressBook, _userInvoices, _userAbout } from '../../_mock';
 // components
 import Page from '../../components/Page';
+import Iconify from '../../components/Iconify';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
+// sections
 import {
   AccountGeneral,
   AccountBilling,
   AccountSocialLinks,
   AccountNotifications,
-  AccountChangePassword
-} from '../../components/_dashboard/user/account';
+  AccountChangePassword,
+} from '../../sections/@dashboard/user/account';
 
 // ----------------------------------------------------------------------
 
 export default function UserAccount() {
   const { themeStretch } = useSettings();
-  const [currentTab, setCurrentTab] = useState('general');
-  const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getCards());
-    dispatch(getAddressBook());
-    dispatch(getInvoices());
-    dispatch(getNotifications());
-    dispatch(getProfile());
-  }, [dispatch]);
+  const [currentTab, setCurrentTab] = useState('general');
 
   const ACCOUNT_TABS = [
     {
       value: 'general',
-      icon: <Icon icon={roundAccountBox} width={20} height={20} />,
-      component: <AccountGeneral />
+      icon: <Iconify icon={'ic:round-account-box'} width={20} height={20} />,
+      component: <AccountGeneral />,
     },
     {
       value: 'billing',
-      icon: <Icon icon={roundReceipt} width={20} height={20} />,
-      component: <AccountBilling />
+      icon: <Iconify icon={'ic:round-receipt'} width={20} height={20} />,
+      component: <AccountBilling cards={_userPayment} addressBook={_userAddressBook} invoices={_userInvoices} />,
     },
     {
       value: 'notifications',
-      icon: <Icon icon={bellFill} width={20} height={20} />,
-      component: <AccountNotifications />
+      icon: <Iconify icon={'eva:bell-fill'} width={20} height={20} />,
+      component: <AccountNotifications />,
     },
     {
       value: 'social_links',
-      icon: <Icon icon={shareFill} width={20} height={20} />,
-      component: <AccountSocialLinks />
+      icon: <Iconify icon={'eva:share-fill'} width={20} height={20} />,
+      component: <AccountSocialLinks myProfile={_userAbout} />,
     },
     {
       value: 'change_password',
-      icon: <Icon icon={roundVpnKey} width={20} height={20} />,
-      component: <AccountChangePassword />
-    }
+      icon: <Iconify icon={'ic:round-vpn-key'} width={20} height={20} />,
+      component: <AccountChangePassword />,
+    },
   ];
 
-  const handleChangeTab = (event, newValue) => {
-    setCurrentTab(newValue);
-  };
-
   return (
-    <Page title="User: Account Settings | Minimal-UI">
+    <Page title="User: Account Settings">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Account"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             { name: 'User', href: PATH_DASHBOARD.user.root },
-            { name: 'Account Settings' }
+            { name: 'Account Settings' },
           ]}
         />
 
-        <Stack spacing={5}>
-          <Tabs
-            value={currentTab}
-            scrollButtons="auto"
-            variant="scrollable"
-            allowScrollButtonsMobile
-            onChange={handleChangeTab}
-          >
-            {ACCOUNT_TABS.map((tab) => (
-              <Tab disableRipple key={tab.value} label={capitalCase(tab.value)} icon={tab.icon} value={tab.value} />
-            ))}
-          </Tabs>
+        <Tabs
+          value={currentTab}
+          scrollButtons="auto"
+          variant="scrollable"
+          allowScrollButtonsMobile
+          onChange={(e, value) => setCurrentTab(value)}
+        >
+          {ACCOUNT_TABS.map((tab) => (
+            <Tab disableRipple key={tab.value} label={capitalCase(tab.value)} icon={tab.icon} value={tab.value} />
+          ))}
+        </Tabs>
 
-          {ACCOUNT_TABS.map((tab) => {
-            const isMatched = tab.value === currentTab;
-            return isMatched && <Box key={tab.value}>{tab.component}</Box>;
-          })}
-        </Stack>
+        <Box sx={{ mb: 5 }} />
+
+        {ACCOUNT_TABS.map((tab) => {
+          const isMatched = tab.value === currentTab;
+          return isMatched && <Box key={tab.value}>{tab.component}</Box>;
+        })}
       </Container>
     </Page>
   );

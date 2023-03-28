@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Icon } from '@iconify/react';
-import roundFullscreen from '@iconify/icons-ic/round-fullscreen';
-import roundFullscreenExit from '@iconify/icons-ic/round-fullscreen-exit';
-// material
-import { alpha } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+// @mui
+import { alpha } from '@mui/material/styles';
+import { Button } from '@mui/material';
+// components
+import Iconify from '../Iconify';
 
 // ----------------------------------------------------------------------
 
@@ -27,13 +26,14 @@ export default function SettingFullscreen() {
       size="large"
       variant="outlined"
       color={fullscreen ? 'primary' : 'inherit'}
-      startIcon={<Icon icon={fullscreen ? roundFullscreenExit : roundFullscreen} />}
+      startIcon={<Iconify icon={fullscreen ? 'ic:round-fullscreen-exit' : 'ic:round-fullscreen'} />}
       onClick={toggleFullScreen}
       sx={{
         fontSize: 14,
         ...(fullscreen && {
-          bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity)
-        })
+          bgcolor: (theme) =>
+            alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
+        }),
       }}
     >
       {fullscreen ? 'Exit Fullscreen' : 'Fullscreen'}

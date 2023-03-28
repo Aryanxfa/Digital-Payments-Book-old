@@ -10,6 +10,8 @@ const isValidToken = (accessToken) => {
     return false;
   }
 
+  // ----------------------------------------------------------------------
+
   const decoded = jwtDecode(accessToken);
   const currentTime = Date.now() / 1000;
 
@@ -28,6 +30,8 @@ const isValidToken = (accessToken) => {
 //     // You can do what ever you want here, like show a notification
 //   }, timeLeft);
 // };
+
+// ----------------------------------------------------------------------
 
 const setSession = (accessToken) => {
   if (accessToken) {

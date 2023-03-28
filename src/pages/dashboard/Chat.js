@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-// material
-import { Card, Container } from '@material-ui/core';
+// @mui
+import { Card, Container } from '@mui/material';
 // redux
 import { useDispatch } from '../../redux/store';
 import { getConversations, getContacts } from '../../redux/slices/chat';
@@ -11,7 +11,7 @@ import useSettings from '../../hooks/useSettings';
 // components
 import Page from '../../components/Page';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { ChatSidebar, ChatWindow } from '../../components/_dashboard/chat';
+import { ChatSidebar, ChatWindow } from '../../sections/@dashboard/chat';
 
 // ----------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ export default function Chat() {
   }, [dispatch]);
 
   return (
-    <Page title="Chat | Minimal-UI">
+    <Page title="Chat">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <HeaderBreadcrumbs
           heading="Chat"

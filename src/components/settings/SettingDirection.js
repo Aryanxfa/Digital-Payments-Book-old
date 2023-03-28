@@ -1,6 +1,23 @@
-import { Box, Grid, Paper, Radio, RadioGroup, CardActionArea, FormControlLabel } from '@material-ui/core';
+// @mui
+import { styled } from '@mui/material/styles';
+import { Grid, RadioGroup, CardActionArea } from '@mui/material';
 // hooks
 import useSettings from '../../hooks/useSettings';
+//
+import Iconify from '../Iconify';
+import { BoxMask } from '.';
+
+// ----------------------------------------------------------------------
+
+const BoxStyle = styled(CardActionArea)(({ theme }) => ({
+  height: 72,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: theme.palette.text.disabled,
+  border: `solid 1px ${theme.palette.grey[500_12]}`,
+  borderRadius: Number(theme.shape.borderRadius) * 1.25,
+}));
 
 // ----------------------------------------------------------------------
 
@@ -9,63 +26,30 @@ export default function SettingDirection() {
 
   return (
     <RadioGroup name="themeDirection" value={themeDirection} onChange={onChangeDirection}>
-      <Grid container spacing={2.5} dir="ltr">
-        {['ltr', 'rtl'].map((direction, index) => (
-          <Grid item xs={6} key={direction}>
-            <Paper
-              key={direction}
-              variant={themeDirection === direction ? 'elevation' : 'outlined'}
-              sx={{
-                width: 1,
-                zIndex: 0,
-                overflow: 'hidden',
-                position: 'relative',
-                ...(themeDirection === direction && {
-                  boxShadow: (theme) => theme.customShadows.z12
-                })
-              }}
-            >
-              <CardActionArea sx={{ color: 'primary.main' }}>
-                <Box
-                  sx={{
-                    p: 1.5,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    ...(index === 1 && { alignItems: 'flex-end' })
-                  }}
-                >
-                  {[56, 36, 24].map((size, index) => (
-                    <Box
-                      key={size}
-                      sx={{
-                        my: 0.5,
-                        width: size,
-                        height: size / 2.5,
-                        borderRadius: 0.75,
-                        bgcolor: themeDirection === direction ? 'primary.main' : 'grey.500',
-                        ...(index === 0 && { opacity: 0.64 }),
-                        ...(index === 1 && { opacity: 0.32, borderRadius: '4px' }),
-                        ...(index === 2 && { opacity: 0.16, borderRadius: '3px' })
-                      }}
-                    />
-                  ))}
-                </Box>
-                <FormControlLabel
-                  label=""
-                  value={direction}
-                  control={<Radio sx={{ display: 'none' }} />}
-                  sx={{
-                    top: 0,
-                    margin: 0,
-                    width: '100%',
-                    height: '100%',
-                    position: 'absolute'
-                  }}
+      <Grid dir="ltr" container spacing={2.5}>
+        {['ltr', 'rtl'].map((direction, index) => {
+          const isSelected = themeDirection === direction;
+
+          return (
+            <Grid key={direction} item xs={6}>
+              <BoxStyle
+                sx={{
+                  ...(isSelected && {
+                    color: 'primary.main',
+                    boxShadow: (theme) => theme.customShadows.z20,
+                  }),
+                }}
+              >
+                <Iconify
+                  icon={index === 0 ? 'ph:align-left-duotone' : 'ph:align-right-duotone'}
+                  width={28}
+                  height={28}
                 />
-              </CardActionArea>
-            </Paper>
-          </Grid>
-        ))}
+                <BoxMask value={direction} />
+              </BoxStyle>
+            </Grid>
+          );
+        })}
       </Grid>
     </RadioGroup>
   );

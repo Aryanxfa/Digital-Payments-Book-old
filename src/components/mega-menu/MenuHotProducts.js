@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
-// material
-import { Link, Typography, Box } from '@material-ui/core';
+// @mui
+import { Link, Typography, Box } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 MenuHotProducts.propTypes = {
-  tags: PropTypes.array
+  tags: PropTypes.array.isRequired,
 };
 
 export default function MenuHotProducts({ tags, ...other }) {
@@ -26,7 +26,7 @@ export default function MenuHotProducts({ tags, ...other }) {
           sx={{
             color: 'text.secondary',
             transition: (theme) => theme.transitions.create('all'),
-            '&:hover': { color: 'primary.main' }
+            '&:hover': { color: 'primary.main' },
           }}
         >
           {index === 0 ? tag.name : `, ${tag.name} `}

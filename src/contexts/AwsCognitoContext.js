@@ -6,21 +6,21 @@ import axios from '../utils/axios';
 // routes
 import { PATH_AUTH } from '../routes/paths';
 //
-import { cognitoConfig } from '../config';
+import { COGNITO_API } from '../config';
 
 // ----------------------------------------------------------------------
 
 // CAUTION: User Cognito is slily difference from firebase, so be sure to read the doc carefully.
 
 export const UserPool = new CognitoUserPool({
-  UserPoolId: cognitoConfig.userPoolId,
-  ClientId: cognitoConfig.clientId
+  UserPoolId: COGNITO_API.userPoolId,
+  ClientId: COGNITO_API.clientId,
 });
 
 const initialState = {
   isAuthenticated: false,
   isInitialized: false,
-  user: null
+  user: null,
 };
 
 const handlers = {
@@ -31,14 +31,14 @@ const handlers = {
       ...state,
       isAuthenticated,
       isInitialized: true,
-      user
+      user,
     };
   },
   LOGOUT: (state) => ({
     ...state,
     isAuthenticated: false,
-    user: null
-  })
+    user: null,
+  }),
 };
 
 const reducer = (state, action) => (handlers[action.type] ? handlers[action.type](state, action) : state);
@@ -48,11 +48,13 @@ const AuthContext = createContext({
   method: 'cognito',
   login: () => Promise.resolve(),
   register: () => Promise.resolve(),
-  logout: () => Promise.resolve()
+  logout: () => Promise.resolve(),
 });
 
+// ----------------------------------------------------------------------
+
 AuthProvider.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 function AuthProvider({ children }) {
@@ -92,12 +94,12 @@ function AuthProvider({ children }) {
               axios.defaults.headers.common.Authorization = token;
               dispatch({
                 type: 'AUTHENTICATE',
-                payload: { isAuthenticated: true, user: attributes }
+                payload: { isAuthenticated: true, user: attributes },
               });
               resolve({
                 user,
                 session,
-                headers: { Authorization: token }
+                headers: { Authorization: token },
               });
             }
           });
@@ -106,8 +108,8 @@ function AuthProvider({ children }) {
             type: 'AUTHENTICATE',
             payload: {
               isAuthenticated: false,
-              user: null
-            }
+              user: null,
+            },
           });
         }
       }),
@@ -122,8 +124,8 @@ function AuthProvider({ children }) {
         type: 'AUTHENTICATE',
         payload: {
           isAuthenticated: false,
-          user: null
-        }
+          user: null,
+        },
       });
     }
   }, [getSession]);
@@ -140,12 +142,12 @@ function AuthProvider({ children }) {
       new Promise((resolve, reject) => {
         const user = new CognitoUser({
           Username: email,
-          Pool: UserPool
+          Pool: UserPool,
         });
 
         const authDetails = new AuthenticationDetails({
           Username: email,
-          Password: password
+          Password: password,
         });
 
         user.authenticateUser(authDetails, {
@@ -159,7 +161,7 @@ function AuthProvider({ children }) {
           newPasswordRequired: () => {
             // Handle this on login page for update password.
             resolve({ message: 'newPasswordRequired' });
-          }
+          },
         });
       }),
     [getSession]
@@ -181,7 +183,7 @@ function AuthProvider({ children }) {
         password,
         [
           { Name: 'email', Value: email },
-          { Name: 'name', Value: `${firstName} ${lastName}` }
+          { Name: 'name', Value: `${firstName} ${lastName}` },
         ],
         null,
         async (err) => {
@@ -195,8 +197,6 @@ function AuthProvider({ children }) {
       )
     );
 
-  const resetPassword = () => {};
-
   return (
     <AuthContext.Provider
       value={{
@@ -205,12 +205,11 @@ function AuthProvider({ children }) {
         user: {
           displayName: state?.user?.name || 'Minimals',
           role: 'admin',
-          ...state.user
+          ...state.user,
         },
         login,
         register,
         logout,
-        resetPassword
       }}
     >
       {children}

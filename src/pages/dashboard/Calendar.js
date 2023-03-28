@@ -4,13 +4,10 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Icon } from '@iconify/react';
-import { useSnackbar } from 'notistack5';
-import plusFill from '@iconify/icons-eva/plus-fill';
+//
 import { useState, useRef, useEffect } from 'react';
-// material
-import { useTheme } from '@material-ui/core/styles';
-import { Card, Button, Container, DialogTitle, useMediaQuery } from '@material-ui/core';
+// @mui
+import { Card, Button, Container, DialogTitle } from '@mui/material';
 // redux
 import { useDispatch, useSelector } from '../../redux/store';
 import { getEvents, openModal, closeModal, updateEvent, selectEvent, selectRange } from '../../redux/slices/calendar';
@@ -18,11 +15,14 @@ import { getEvents, openModal, closeModal, updateEvent, selectEvent, selectRange
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
 import useSettings from '../../hooks/useSettings';
+import useResponsive from '../../hooks/useResponsive';
 // components
 import Page from '../../components/Page';
+import Iconify from '../../components/Iconify';
 import { DialogAnimate } from '../../components/animate';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { CalendarForm, CalendarStyle, CalendarToolbar } from '../../components/_dashboard/calendar';
+// sections
+import { CalendarForm, CalendarStyle, CalendarToolbar } from '../../sections/@dashboard/calendar';
 
 // ----------------------------------------------------------------------
 
@@ -36,14 +36,19 @@ const selectedEventSelector = (state) => {
 
 export default function Calendar() {
   const { themeStretch } = useSettings();
+
   const dispatch = useDispatch();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const isDesktop = useResponsive('up', 'sm');
+
   const calendarRef = useRef(null);
-  const { enqueueSnackbar } = useSnackbar();
+
   const [date, setDate] = useState(new Date());
-  const [view, setView] = useState(isMobile ? 'listWeek' : 'dayGridMonth');
+
+  const [view, setView] = useState(isDesktop ? 'dayGridMonth' : 'listWeek');
+
   const selectedEvent = useSelector(selectedEventSelector);
+
   const { events, isOpenModal, selectedRange } = useSelector((state) => state.calendar);
 
   useEffect(() => {
@@ -54,11 +59,11 @@ export default function Calendar() {
     const calendarEl = calendarRef.current;
     if (calendarEl) {
       const calendarApi = calendarEl.getApi();
-      const newView = isMobile ? 'listWeek' : 'dayGridMonth';
+      const newView = isDesktop ? 'dayGridMonth' : 'listWeek';
       calendarApi.changeView(newView);
       setView(newView);
     }
-  }, [isMobile]);
+  }, [isDesktop]);
 
   const handleClickToday = () => {
     const calendarEl = calendarRef.current;
@@ -115,10 +120,9 @@ export default function Calendar() {
         updateEvent(event.id, {
           allDay: event.allDay,
           start: event.start,
-          end: event.end
+          end: event.end,
         })
       );
-      enqueueSnackbar('Update event success', { variant: 'success' });
     } catch (error) {
       console.error(error);
     }
@@ -130,12 +134,9 @@ export default function Calendar() {
         updateEvent(event.id, {
           allDay: event.allDay,
           start: event.start,
-          end: event.end
+          end: event.end,
         })
       );
-      enqueueSnackbar('Update event success', {
-        variant: 'success'
-      });
     } catch (error) {
       console.error(error);
     }
@@ -150,7 +151,7 @@ export default function Calendar() {
   };
 
   return (
-    <Page title="Calendar | Minimal-UI">
+    <Page title="Calendar">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <HeaderBreadcrumbs
           heading="Calendar"
@@ -159,7 +160,7 @@ export default function Calendar() {
           action={
             <Button
               variant="contained"
-              startIcon={<Icon icon={plusFill} width={20} height={20} />}
+              startIcon={<Iconify icon={'eva:plus-fill'} width={20} height={20} />}
               onClick={handleAddEvent}
             >
               New Event
@@ -196,7 +197,7 @@ export default function Calendar() {
               eventDrop={handleDropEvent}
               eventClick={handleSelectEvent}
               eventResize={handleResizeEvent}
-              height={isMobile ? 'auto' : 720}
+              height={isDesktop ? 720 : 'auto'}
               plugins={[listPlugin, dayGridPlugin, timelinePlugin, timeGridPlugin, interactionPlugin]}
             />
           </CalendarStyle>
@@ -205,7 +206,7 @@ export default function Calendar() {
         <DialogAnimate open={isOpenModal} onClose={handleCloseModal}>
           <DialogTitle>{selectedEvent ? 'Edit Event' : 'Add Event'}</DialogTitle>
 
-          <CalendarForm event={selectedEvent} range={selectedRange} onCancel={handleCloseModal} />
+          <CalendarForm event={selectedEvent || {}} range={selectedRange} onCancel={handleCloseModal} />
         </DialogAnimate>
       </Container>
     </Page>
