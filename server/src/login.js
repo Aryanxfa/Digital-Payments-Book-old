@@ -1,4 +1,3 @@
-export function loginCheck(){
-
-    return
+export function loginCheck() {
+  return;
 }
